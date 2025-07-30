@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>world.execute(me);</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
+        :root {
+            --idea-bg: #2b2b2b;
+            --idea-text: #a9b7c6;
+            --idea-keyword: #cc7832;
+            --idea-class: #a9b7c6;
+            --idea-function: #ffc66d;
+            --idea-string: #6a8759;
+            --idea-comment: #808080;
+            --idea-error: #ff6b6b;
+            --idea-love: #ff69b4;
+            --idea-highlight: #f0f0f0;
+            --idea-border: #3c3f41;
+            --idea-tab-bg: #3c3f41;
+            --idea-tab-active: #4c5052;
+            --font-idea: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: var(--idea-bg);
+            color: var(--idea-text);
+            font-family: var(--font-idea);
+            overflow: hidden;
+        }
+
+        /* IDEA Launch Screen */
+        #launch-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 70% 30%, #1e1e1e 0%, #2b2b2b 40%, #3c3f41 100%);
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column; cursor: pointer;
+            z-index: 100;
+            transition: opacity 1s;
+        }
+        #launch-screen.hidden { opacity: 0; pointer-events: none; }
+        
+        .launch-content {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+        .launch-title {
+            font-size: 4.5em;
+            font-weight: 300;
+            margin-bottom: 0.3em;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            letter-spacing: 2px;
+        }
+        .launch-subtitle {
+            font-size: 1.3em;
+            color: #a9b7c6;
+            margin-bottom: 3em;
+            font-weight: 300;
+        }
+        .launch-hint {
+            font-size: 1.1em;
+            color: #808080;
+            animation: blink 1.5s infinite;
+            font-weight: 400;
+        }
+        
+        /* Abstract background elements */
+        .launch-bg-elements {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .bg-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 8s ease-in-out infinite;
+        }
+        .bg-element:nth-child(1) {
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, #ff6b6b, transparent);
+            top: 10%; right: 15%;
+            animation-delay: 0s;
+        }
+        .bg-element:nth-child(2) {
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, #4ecdc4, transparent);
+            bottom: 20%; left: 10%;
+            animation-delay: 2s;
+        }
+        .bg-element:nth-child(3) {
+            width: 150px; height: 150px;
+            background: radial-gradient(circle, #45b7d1, transparent);
+            top: 60%; right: 25%;
+            animation-delay: 4s;
+        }
+        .bg-element:nth-child(4) {
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, #96ceb4, transparent);
+            bottom: 10%; right: 5%;
+            animation-delay: 6s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0.3; } }
+
+        /* IDEA Editor Interface */
+        #idea-editor {
+            position: relative; width: 100%; height: 100%;
+            display: none;
+            background-color: var(--idea-bg);
+            transform: scale(1.25);
+            transform-origin: top left;
+            width: 80%; /* Compensate for scale */
+            height: 80%; /* Compensate for scale */
+        }
+        #idea-editor.visible { display: block; }
+
+        /* Toolbar */
+        .toolbar {
+            height: 50px;
+            background-color: var(--idea-tab-bg);
+            border-bottom: 1px solid var(--idea-border);
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+        }
+        .project-name {
+            color: var(--idea-text);
+            font-weight: 500;
+            margin-right: 25px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .idea-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+        }
+        .run-button {
+            background-color: #4c5052;
+            color: var(--idea-text);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-idea);
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .run-button:hover {
+            background-color: #5c6164;
+        }
+        .run-button:active {
+            background-color: #3c3f41;
+            transform: scale(0.95);
+        }
+        .run-button.playing {
+            background-color: #2d5a2d;
+        }
+        
+        .debug-button {
+            background-color: #4c5052;
+            color: var(--idea-text);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-idea);
+            font-size: 1.1em;
+            margin-left: 8px;
+            transition: all 0.2s ease;
+        }
+        .debug-button:hover {
+            background-color: #5c6164;
+        }
+        .debug-button:active {
+            background-color: #3c3f41;
+            transform: scale(0.95);
+        }
+        
+        .stop-button {
+            background-color: #4c5052;
+            color: var(--idea-text);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-idea);
+            font-size: 1.1em;
+            margin-left: 8px;
+            transition: all 0.2s ease;
+            display: none;
+        }
+        .stop-button:hover {
+            background-color: #5c6164;
+        }
+        .stop-button:active {
+            background-color: #3c3f41;
+            transform: scale(0.95);
+        }
+        .stop-button.visible {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stop-button.visible {
+            background-color: #5a2a2a;
+        }
+        
+        .button-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .button-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            height: calc(100% - 50px);
+        }
+
+        /* Project Explorer */
+        .project-explorer {
+            width: 312px;
+            background-color: var(--idea-tab-bg);
+            border-right: 1px solid var(--idea-border);
+            padding: 12px;
+        }
+        .explorer-title {
+            color: var(--idea-text);
+            font-weight: 500;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+        .project-tree {
+            color: var(--idea-text);
+            font-size: 1.05em;
+        }
+        .tree-item {
+            padding: 3px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .file-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tree-item:hover {
+            background-color: #3c3f41;
+        }
+        .tree-item.active {
+            background-color: #4c5052;
+        }
+
+        /* Editor Area */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Tabs */
+        .tabs {
+            height: 44px;
+            background-color: var(--idea-tab-bg);
+            border-bottom: 1px solid var(--idea-border);
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+        }
+        .tab {
+            background-color: var(--idea-tab-bg);
+            color: var(--idea-text);
+            border: none;
+            padding: 10px 20px;
+            margin-right: 3px;
+            cursor: pointer;
+            font-family: var(--font-idea);
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .tab-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tab.active {
+            background-color: var(--idea-tab-active);
+        }
+
+        /* Code Editor */
+        .code-editor {
+            flex: 1;
+            background-color: var(--idea-bg);
+            padding: 25px;
+            overflow-y: auto;
+            position: relative;
+            scroll-behavior: smooth;
+        }
+        .line-numbers {
+            position: absolute;
+            left: 0;
+            top: 25px;
+            width: 62px;
+            color: var(--idea-comment);
+            font-size: 1.1em;
+            text-align: right;
+            padding-right: 12px;
+            user-select: none;
+        }
+        .code-content {
+            margin-left: 75px;
+            font-size: 17.5px;
+            line-height: 1.5;
+        }
+        .code-line {
+            margin: 0;
+            padding: 2px 0;
+            white-space: pre-wrap;
+        }
+        .code-line.highlight {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Syntax Highlighting */
+        .keyword { color: var(--idea-keyword); }
+        .class-name { color: var(--idea-class); }
+        .function { color: var(--idea-function); }
+        .string { color: var(--idea-string); }
+        .comment { color: var(--idea-comment); }
+        .error { color: var(--idea-error); }
+        .love { color: var(--idea-love); }
+        .highlight { color: var(--idea-highlight); }
+
+        /* Terminal */
+        .terminal {
+            height: 187px;
+            background-color: #1e1e1e;
+            border-top: 1px solid var(--idea-border);
+            padding: 12px;
+            font-family: var(--font-idea);
+            font-size: 1.1em;
+            overflow-y: auto;
+        }
+        .terminal-line {
+            margin: 0;
+            padding: 2px 0;
+        }
+        .terminal-prompt {
+            color: var(--idea-function);
+        }
+
+        /* Special Effects */
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background-color: var(--idea-text);
+            animation: blink 1s infinite;
+        }
+
+        .emphasis {
+            font-size: 1.5em;
+            color: var(--idea-highlight);
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .error-text {
+            color: var(--idea-error);
+            font-weight: 500;
+        }
+
+        .love-text {
+            color: var(--idea-love);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Java-specific styling */
+        .java-class {
+            color: var(--idea-class);
+            font-weight: 500;
+        }
+        .java-method {
+            color: var(--idea-function);
+        }
+        .java-keyword {
+            color: var(--idea-keyword);
+        }
+        .java-string {
+            color: var(--idea-string);
+        }
+
+        /* Animation effects */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid var(--idea-text);
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--idea-text); }
+        }
+
+        /* IDEA Git Notification Styles */
+        .idea-git-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: linear-gradient(135deg, #2b2b2b 0%, #3c3f41 100%);
+            border: 2px solid #57965c;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(87, 150, 92, 0.3);
+            padding: 0;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 500px;
+            min-width: 400px;
+            overflow: hidden;
+        }
+        
+        .idea-git-notification.show {
+            opacity: 1;
+            pointer-events: all;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .git-notification-header {
+            background: linear-gradient(90deg, #57965c, #4caf50);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .git-notification-icon {
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .git-notification-content {
+            padding: 20px;
+            color: var(--idea-text);
+            line-height: 1.6;
+        }
+        
+        .git-notification-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #4caf50;
+        }
+        
+        .git-notification-message {
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+        
+        /* Rainbow Cat Progress Bar */
+        .rainbow-cat-progress {
+            background: #1e1e1e;
+            border: 1px solid #3c3f41;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar-container {
+            background: #2b2b2b;
+            border-radius: 20px;
+            height: 20px;
+            position: relative;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .rainbow-cat-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                #ff0000 0%, #ff8000 14.28%, #ffff00 28.57%, 
+                #80ff00 42.85%, #00ff00 57.14%, #00ffff 71.42%, 
+                #0080ff 85.71%, #8000ff 100%);
+            border-radius: 20px;
+            transition: width 0.3s ease;
+            position: relative;
+            animation: rainbowFlow 2s linear infinite;
+        }
+        
+        @keyframes rainbowFlow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        .cat-emoji {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            font-size: 16px;
+            animation: catWalk 3s linear infinite;
+            z-index: 2;
+        }
+        
+        @keyframes catWalk {
+            0% { left: 0%; }
+            100% { left: 100%; }
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #a9b7c6;
+            margin-top: 8px;
+        }
+        
+        .git-status {
+            background: #1e1e1e;
+            border: 1px solid #3c3f41;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: #a9b7c6;
+            margin: 10px 0;
+        }
+        
+        .git-status-line {
+            margin: 2px 0;
+            padding: 2px 0;
+        }
+        
+        .git-status-line.success {
+            color: #4caf50;
+        }
+        
+        .git-status-line.info {
+            color: #2196f3;
+        }
+        
+        .git-notification-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 15px 20px;
+            border-top: 1px solid var(--idea-border);
+        }
+        
+        .git-notification-btn {
+            background: #4c5052;
+            color: var(--idea-text);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-idea);
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+        
+        .git-notification-btn:hover {
+            background: #5c6164;
+        }
+        
+        .git-notification-btn.primary {
+            background: #57965c;
+            color: white;
+        }
+        
+        .git-notification-btn.primary:hover {
+            background: #4caf50;
+        }
+        
+        /* Animation effects */
+        @keyframes gitNotificationGlow {
+            0%, 100% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(87, 150, 92, 0.3); }
+            50% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(87, 150, 92, 0.6), 0 0 0 1px rgba(87, 150, 92, 0.5); }
+        }
+        
+        .idea-git-notification {
+            animation: gitNotificationGlow 2s infinite;
+        }
+
+        /* Multiple Error Notifications */
+        .error-notification {
+            position: fixed;
+            background: linear-gradient(135deg, #2b2b2b 0%, #3c3f41 100%);
+            border: 2px solid #ff6b6b;
+            border-radius: 8px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 107, 107, 0.3);
+            padding: 0;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 400px;
+            min-width: 350px;
+            overflow: hidden;
+            animation: errorShake 0.5s ease-in-out, errorGlow 1s infinite;
+        }
+        
+        .error-notification.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .error-notification-header {
+            background: linear-gradient(90deg, #ff6b6b, #e74c3c);
+            color: white;
+            padding: 12px 15px;
+            font-weight: 600;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .error-notification-icon {
+            width: 16px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        .error-notification-content {
+            padding: 15px;
+            color: var(--idea-text);
+            line-height: 1.4;
+        }
+        
+        .error-notification-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ff6b6b;
+        }
+        
+        .error-notification-message {
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        
+        .error-stack-small {
+            background: #1e1e1e;
+            border: 1px solid #3c3f41;
+            border-radius: 4px;
+            padding: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8em;
+            color: #a9b7c6;
+            margin: 8px 0;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        
+        .error-notification-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            padding: 12px 15px;
+            border-top: 1px solid var(--idea-border);
+        }
+        
+        .error-notification-btn {
+            background: #4c5052;
+            color: var(--idea-text);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-idea);
+            font-size: 0.8em;
+            transition: all 0.2s ease;
+        }
+        
+        .error-notification-btn:hover {
+            background: #5c6164;
+        }
+        
+        .error-notification-btn.danger {
+            background: #5a2a2a;
+            color: #ff6b6b;
+        }
+        
+        .error-notification-btn.danger:hover {
+            background: #6a3a3a;
+        }
+        
+        @keyframes errorShake {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            10%, 30%, 50%, 70%, 90% { transform: translate(-2px, -2px) scale(1.02) rotate(1deg); }
+            20%, 40%, 60%, 80% { transform: translate(2px, 2px) scale(0.98) rotate(-1deg); }
+        }
+        
+        @keyframes errorGlow {
+            0%, 100% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 107, 107, 0.3); }
+            50% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 107, 107, 0.6), 0 0 0 1px rgba(255, 107, 107, 0.5); }
+        }
+    </style>
+</head>
+<body>
+    <!-- IDEA Launch Screen -->
+    <div id="launch-screen">
+        <div class="launch-bg-elements">
+            <div class="bg-element"></div>
+            <div class="bg-element"></div>
+            <div class="bg-element"></div>
+            <div class="bg-element"></div>
+        </div>
+        <div class="launch-content">
+            <div class="launch-title">IntelliJ IDEA</div>
+            <div class="launch-subtitle">JetBrains IDE</div>
+            <div class="launch-hint">Click to run world.execute(me);</div>
+        </div>
+    </div>
+
+    <!-- IDEA Editor Interface -->
+    <div id="idea-editor">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <span class="project-name">
+                <div class="idea-icon">I</div>
+                world.execute.me
+            </span>
+            <button class="run-button" id="run-button">
+                <span class="button-icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_16791_12094)">
+                            <path d="M13.5 7.13397C14.1667 7.51888 14.1667 8.48112 13.5 8.86602L4.5 14.0622C3.83333 14.4471 3 13.966 3 13.1962L3 2.80385C3 2.03405 3.83333 1.55292 4.5 1.93782L13.5 7.13397Z" fill="#253627" stroke="#57965C"/>
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_16791_12094">
+                                <rect width="16" height="16" fill="white"/>
+                            </clipPath>
+                        </defs>
+                    </svg>
+                </span>
+                <span class="button-text"></span>
+            </button>
+            <button class="debug-button" id="debug-button">
+                <span class="button-icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M10.6907 4.4347C10.6974 4.35728 10.7008 4.27899 10.7008 4.2C10.7008 2.70883 9.49195 1.5 8.00078 1.5C6.50961 1.5 5.30078 2.70883 5.30078 4.2C5.30078 4.27871 5.30416 4.35672 5.3108 4.43387C4.83909 4.6943 4.43389 5.06042 4.12714 5.5003L2.0178 4.36019C1.77487 4.22888 1.4715 4.31937 1.34019 4.5623C1.20889 4.80523 1.29938 5.1086 1.5423 5.2399L3.67822 6.39438C3.5626 6.74191 3.5 7.11364 3.5 7.5V8.50006H1C0.723858 8.50006 0.5 8.72392 0.5 9.00006C0.5 9.2762 0.723858 9.50006 1 9.50006H3.5V10C3.5 10.4892 3.57807 10.9602 3.72243 11.4012L1.52989 12.667C1.29075 12.8051 1.20881 13.1109 1.34688 13.3501C1.48495 13.5892 1.79075 13.6711 2.02989 13.5331L4.14017 12.3147C4.92703 13.624 6.36122 14.5 8 14.5C9.63821 14.5 11.072 13.6246 11.859 12.3161L13.967 13.5331C14.2061 13.6712 14.5119 13.5893 14.65 13.3501C14.7881 13.111 14.7061 12.8052 14.467 12.6671L12.2771 11.4028C12.4217 10.9613 12.5 10.4898 12.5 10V9.49982H15C15.2761 9.49982 15.5 9.27596 15.5 8.99982C15.5 8.72367 15.2761 8.49982 15 8.49982H12.5V7.5C12.5 7.11367 12.4374 6.74197 12.3218 6.39447L14.4551 5.23979C14.698 5.10835 14.7883 4.80492 14.6569 4.56207C14.5254 4.31922 14.222 4.2289 13.9791 4.36035L11.8729 5.50036C11.5665 5.06092 11.1618 4.69509 10.6907 4.4347ZM6.30577 4.06885C6.53015 4.02369 6.76231 4 7 4H9C9.23825 4 9.47094 4.02381 9.69582 4.06917C9.62902 3.19142 8.89564 2.5 8.00078 2.5C7.10603 2.5 6.37272 3.19125 6.30577 4.06885ZM4.5 7.5C4.5 6.11929 5.61929 5 7 5H9C10.3807 5 11.5 6.11929 11.5 7.5V10C11.5 11.933 9.933 13.5 8 13.5C6.067 13.5 4.5 11.933 4.5 10V7.5Z" fill="#57965C"/>
+                        <path d="M7 4C6.76231 4 6.53015 4.02369 6.30577 4.06885C6.37272 3.19125 7.10603 2.5 8.00078 2.5C8.89564 2.5 9.62902 3.19142 9.69582 4.06917C9.47094 4.02381 9.23825 4 9 4H7Z" fill="#253627"/>
+                        <path d="M7 5C5.61929 5 4.5 6.11929 4.5 7.5V10C4.5 11.933 6.067 13.5 8 13.5C9.933 13.5 11.5 11.933 11.5 10V7.5C11.5 6.11929 10.3807 5 9 5H7Z" fill="#253627"/>
+                    </svg>
+                </span>
+            </button>
+            <button class="stop-button" id="stop-button">
+                <span class="button-icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2.5" y="2.5" width="11" height="11" rx="1.5" fill="#5E3838" stroke="#DB5C5C"/>
+                    </svg>
+                </span>
+                <span class="button-text">Stop</span>
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Project Explorer -->
+            <div class="project-explorer">
+                <div class="explorer-title">Project</div>
+                <div class="project-tree">
+                    <div class="tree-item active">
+                        <span class="file-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#clip0_1505_47494)">
+                                    <path d="M8.5 8C8.77614 8 9 8.22386 9 8.5V9.326L9.181 9.16238C9.90358 8.44447 10.9005 8 12.0002 8C13.1046 8 14.1053 8.44826 14.8286 9.17157C15.1887 9.5316 15.4806 9.96029 15.6831 10.4368C15.8159 10.7493 15.9101 11.0822 15.9597 11.4292C15.9988 11.7026 15.8089 11.9559 15.5356 11.995C15.2622 12.0341 15.0089 11.8442 14.9698 11.5708C14.9326 11.3108 14.8621 11.0617 14.7627 10.8279C14.6111 10.4711 14.3922 10.1493 14.1215 9.87868C13.5781 9.33524 12.8288 9 12.0002 9C11.1716 9 10.4223 9.33524 9.87888 9.87868L9.86997 9.88759L9.74562 10H10.5C10.7761 10 11 10.2239 11 10.5C11 10.7761 10.7761 11 10.5 11H8.5C8.22386 11 8 10.7761 8 10.5V8.5C8 8.22386 8.22386 8 8.5 8Z" fill="#548AF7"/>
+                                    <path d="M8.46491 12.005C8.73827 11.9659 8.99157 12.1558 9.03067 12.4292C9.12449 13.0851 9.43079 13.6732 9.87894 14.1213C10.4224 14.6648 11.1717 15 12.0003 15C12.8288 15 13.5781 14.6648 14.1216 14.1213L14.1305 14.1124L14.2487 14H13.5C13.2239 14 13 13.7761 13 13.5C13 13.2239 13.2239 13 13.5 13H15.5C15.7761 13 16 13.2239 16 13.5V15.5C16 15.7761 15.7761 16 15.5 16C15.2239 16 15 15.7761 15 15.5V14.6657L14.8241 14.833C14.1011 15.5536 13.1024 16 12.0003 16C10.8958 16 9.89515 15.5517 9.17184 14.8284C8.57574 14.2323 8.16618 13.4477 8.04075 12.5708C8.00165 12.2974 8.19155 12.0441 8.46491 12.005Z" fill="#548AF7"/>
+                                    <path d="M13 5H8.09379L6.03823 3H2.75C2.3956 3 2 3.32624 2 3.86667V12.1333C2 12.6738 2.3956 13 2.75 13H7.10002C7.17062 13.3478 7.27732 13.6825 7.41604 14H2.75C1.7835 14 1 13.1643 1 12.1333V3.86667C1 2.83574 1.7835 2 2.75 2H6.03823C6.29871 2 6.5489 2.10163 6.73559 2.28327L8.5 4L13 4C14.1046 4 15 4.89543 15 6V7.99963C14.6923 7.76849 14.357 7.57202 14 7.41604V6C14 5.44772 13.5523 5 13 5Z" fill="#CED0D6"/>
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_1505_47494">
+                                        <rect width="16" height="16" fill="white"/>
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </span>
+                        world.execute.me
+                    </div>
+                    <div class="tree-item">
+                        <span class="file-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="8" cy="8" r="6.5" fill="#25324D" stroke="#548AF7"/>
+                                <path d="M8.13295 11.5C9.61223 11.5 10.8836 10.6105 11.2075 9.33909H10.2213C9.90229 10.0739 9.11914 10.6057 8.13295 10.6057C6.77936 10.6057 5.80284 9.51796 5.80284 8C5.80284 6.48204 6.77936 5.39434 8.13295 5.39434C9.11914 5.39434 9.90229 5.92611 10.2213 6.66091H11.2075C10.8836 5.3895 9.61223 4.5 8.13295 4.5C6.21859 4.5 4.79248 5.99378 4.79248 8C4.79248 10.0062 6.21859 11.5 8.13295 11.5Z" fill="#548AF7"/>
+                            </svg>
+                        </span>
+                        Main.java
+                    </div>
+                    <div class="tree-item">
+                        <span class="file-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="8" cy="8" r="6.5" fill="#25324D" stroke="#548AF7"/>
+                                <path d="M8.13295 11.5C9.61223 11.5 10.8836 10.6105 11.2075 9.33909H10.2213C9.90229 10.0739 9.11914 10.6057 8.13295 10.6057C6.77936 10.6057 5.80284 9.51796 5.80284 8C5.80284 6.48204 6.77936 5.39434 8.13295 5.39434C9.11914 5.39434 9.90229 5.92611 10.2213 6.66091H11.2075C10.8836 5.3895 9.61223 4.5 8.13295 4.5C6.21859 4.5 4.79248 5.99378 4.79248 8C4.79248 10.0062 6.21859 11.5 8.13295 11.5Z" fill="#548AF7"/>
+                            </svg>
+                        </span>
+                        WorldExecuteMe.java
+                    </div>
+                    <div class="tree-item">
+                        <span class="file-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M12.5929 9.9438L12.5929 4.70001L13.7929 4.70002L13.7929 9.94379L15.0763 8.66037L15.9248 9.5089L13.1929 12.2409L10.4609 9.5089L11.3095 8.66037L12.5929 9.9438Z" fill="#548AF7"/>
+                                <path d="M0.5 4.70001H2.94558L4.65385 9.14463L4.76288 9.60155L4.85635 9.14463L6.51269 4.70001H8.98423V11.9692H7.14096V7.59732L7.17212 7.12482L5.34442 11.9692H4.08269L2.31212 7.17155L2.34327 7.59732V11.9692H0.5V4.70001Z" fill="#548AF7"/>
+                            </svg>
+                        </span>
+                        <a href="README.md" target="_blank" class="explorer-title" style="text-decoration: none; font-weight: bold;">README.md</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Editor Area -->
+            <div class="editor-area">
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active">
+                        <span class="tab-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="8" cy="8" r="6.5" fill="#25324D" stroke="#548AF7"/>
+                                <path d="M8.13295 11.5C9.61223 11.5 10.8836 10.6105 11.2075 9.33909H10.2213C9.90229 10.0739 9.11914 10.6057 8.13295 10.6057C6.77936 10.6057 5.80284 9.51796 5.80284 8C5.80284 6.48204 6.77936 5.39434 8.13295 5.39434C9.11914 5.39434 9.90229 5.92611 10.2213 6.66091H11.2075C10.8836 5.3895 9.61223 4.5 8.13295 4.5C6.21859 4.5 4.79248 5.99378 4.79248 8C4.79248 10.0062 6.21859 11.5 8.13295 11.5Z" fill="#548AF7"/>
+                            </svg>
+                        </span>
+                        WorldExecuteMe.java
+                    </button>
+                    <button class="tab">
+                        <span class="tab-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="8" cy="8" r="6.5" fill="#25324D" stroke="#548AF7"/>
+                                <path d="M8.13295 11.5C9.61223 11.5 10.8836 10.6105 11.2075 9.33909H10.2213C9.90229 10.0739 9.11914 10.6057 8.13295 10.6057C6.77936 10.6057 5.80284 9.51796 5.80284 8C5.80284 6.48204 6.77936 5.39434 8.13295 5.39434C9.11914 5.39434 9.90229 5.92611 10.2213 6.66091H11.2075C10.8836 5.3895 9.61223 4.5 8.13295 4.5C6.21859 4.5 4.79248 5.99378 4.79248 8C4.79248 10.0062 6.21859 11.5 8.13295 11.5Z" fill="#548AF7"/>
+                            </svg>
+                        </span>
+                        Main.java
+                    </button>
+                </div>
+
+                <!-- Code Editor -->
+                <div class="code-editor">
+                    <div class="line-numbers" id="line-numbers"></div>
+                    <div class="code-content" id="code-content"></div>
+                </div>
+
+                <!-- Terminal -->
+                <div class="terminal" id="terminal"></div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="song" preload="auto">
+        <source src="world-execute-me.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- IDEA Git Notification -->
+    <div class="idea-git-notification" id="idea-git-notification">
+        <div class="git-notification-header">
+            <div class="git-notification-icon">📦</div>
+            <span>Git Push Progress</span>
+        </div>
+        <div class="git-notification-content">
+            <div class="git-notification-title" id="git-notification-title">Pushing to origin/main</div>
+            <div class="git-notification-message" id="git-notification-message">Uploading world.execute.me project...</div>
+            
+            <div class="rainbow-cat-progress">
+                <div class="progress-bar-container">
+                    <div class="rainbow-cat-progress-bar" id="rainbow-cat-progress-bar" style="width: 0%"></div>
+                    <div class="cat-emoji">🐱</div>
+                </div>
+                <div class="progress-text" id="progress-text">0% - Initializing...</div>
+            </div>
+            
+            <div class="git-status" id="git-status">
+                <div class="git-status-line info">Counting objects...</div>
+                <div class="git-status-line info">Compressing objects...</div>
+                <div class="git-status-line info">Writing objects...</div>
+            </div>
+        </div>
+        <div class="git-notification-actions">
+            <button class="git-notification-btn" id="git-notification-cancel">Cancel</button>
+            <button class="git-notification-btn primary" id="git-notification-view">View Log</button>
+        </div>
+    </div>
+
+    <!-- Multiple Error Notifications Container -->
+    <div id="error-notifications-container"></div>
+
+    <script>
+        const song = document.getElementById('song');
+        const launchScreen = document.getElementById('launch-screen');
+        const ideaEditor = document.getElementById('idea-editor');
+        const codeContent = document.getElementById('code-content');
+        const lineNumbers = document.getElementById('line-numbers');
+        const terminal = document.getElementById('terminal');
+        const runButton = document.getElementById('run-button');
+        const debugButton = document.getElementById('debug-button');
+        const stopButton = document.getElementById('stop-button');
+        const gitNotification = document.getElementById('idea-git-notification');
+        const gitNotificationTitle = document.getElementById('git-notification-title');
+        const gitNotificationMessage = document.getElementById('git-notification-message');
+        const rainbowCatProgressBar = document.getElementById('rainbow-cat-progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const gitStatus = document.getElementById('git-status');
+        const gitNotificationCancel = document.getElementById('git-notification-cancel');
+        const gitNotificationView = document.getElementById('git-notification-view');
+        const errorNotificationsContainer = document.getElementById('error-notifications-container');
+
+        const timeline = [
+            { time: 0.100, func: typeLine, args: { text: "Switch on the power line", onComplete: showPowerLines } },
+            { time: 1.740, func: typeLine, args: { text: "Remember to put on" } },
+            { time: 2.920, func: showEmphasis, args: { text: "PROTECTION", onComplete: showProtectionShield } },
+            { time: 3.873, func: typeLine, args: { text: "Lay down your pieces" } },
+            { time: 5.491, func: typeLine, args: { text: "And let's begin" } },
+            { time: 6.380, func: showCodeSnippet },
+            { time: 7.446, func: typeLine, args: { text: "Fill in my data parameters INITIALIZATION" } },
+            { time: 10.091, func: showProgressBar },
+            { time: 11.095, func: typeLine, args: { text: "Set up our new world" } },
+            { time: 12.906, func: typeLine, args: { text: "And let's begin the" } },
+            { time: 13.891, func: showEmphasis, args: { text: "SIMULATION" } },
+            
+            // Interlude 1: Binary Rain
+            { time: 16.000, func: startBinaryRain },
+            { time: 20.000, func: showGitPushProgress },
+            { time: 29.000, func: stopBinaryRain },
+            { time: 29.500, func: clearScreen },
+
+            { time: 29.709, func: typeLine, args: { text: "If I'm a set of points", onComplete: drawPoints } },
+            { time: 31.116, func: typeLine, args: { text: "Then I will give you my" } },
+            { time: 32.682, func: showEmphasis, args: { text: "DIMENSION" } },
+            { time: 33.412, func: typeLine, args: { text: "If I'm a circle", onComplete: drawCircle } },
+            { time: 34.646, func: typeLine, args: { text: "Then I will give you my" } },
+            { time: 36.287, func: showEmphasis, args: { text: "CIRCUMFERENCE" } },
+            { time: 37.067, func: typeLine, args: { text: "If I'm a sine wave", onComplete: drawSineWave } },
+            { time: 38.596, func: typeLine, args: { text: "Then you can sit on all my" } },
+            { time: 40.049, func: showEmphasis, args: { text: "TANGENTS", onComplete: drawTangents } },
+            { time: 40.706, func: typeLine, args: { text: "If I approach infinity" } },
+            { time: 42.346, func: typeLine, args: { text: "Then you can be my", onComplete: drawLimitations } },
+            { time: 43.507, func: showEmphasis, args: { text: "LIMITATIONS" } },
+            
+            // Enhanced AC/DC section
+            { time: 44.452, func: typeLine, args: { text: "Switch my current" } },
+            { time: 45.850, func: typeLine, args: { text: "To AC, to DC", onComplete: currentSwitch } },
+            { time: 47.672, func: typeLine, args: { text: "And then blind my vision" } },
+            { time: 49.534, func: blindVision },
+            { time: 50.000, func: typeLine, args: { text: "So dizzy, so dizzy" } },
+            
+            // Enhanced travel section
+            { time: 51.363, func: typeLine, args: { text: "Oh we can travel" } },
+            { time: 53.225, func: typeLine, args: { text: "To A.D to B.C", onComplete: timeTravel } },
+            { time: 55.083, func: typeLine, args: { text: "And we can unite" } },
+            { time: 56.916, func: typeLine, args: { text: "So deeply, so deeply", onComplete: uniteEffect } },
+            
+            // NEW: Clear screen for better readability on small screens
+            { time: 58.000, func: clearScreen },
+            { time: 58.500, func: showGitPushProgress },
+            
+            { time: 59.223, func: typeLine, args: { text: "If I can, If I can give you all the" } },
+            { time: 61.958, func: showEmphasis, args: { text: "STIMULATIONS" } },
+            { time: 62.589, func: typeLine, args: { text: "Then I can, Then I can be your only" } },
+            { time: 65.397, func: showEmphasis, args: { text: "SATISFACTION" } },
+            { time: 66.601, func: typeLine, args: { text: "If I can make you happy" } },
+            { time: 68.252, func: typeLine, args: { text: "I will run the" } },
+            { time: 69.259, func: showEmphasis, args: { text: "EXECUTION" } },
+            { time: 70.084, func: typeLine, args: { text: "Though we are trapped" } },
+            { time: 71.764, func: typeLine, args: { text: "In this strange strange" } },
+            { time: 73.169, func: showEmphasis, args: { text: "SIMULATION" } },
+            
+            // Enhanced eggplant/tomato/cat/god section
+            { time: 74.045, func: clearScreenAndShapes },
+            { time: 74.045, func: typeLine, args: { text: "If I'm an eggplant", onComplete: () => showEmoji('🍆') } },
+            { time: 75.422, func: typeLine, args: { text: "Then I will give you my" } },
+            { time: 76.959, func: showEmphasis, args: { text: "NUTRIENTS", onComplete: showNutrients } },
+            { time: 77.576, func: typeLine, args: { text: "If I'm a tomato", onComplete: () => showEmoji('🍅') } },
+            { time: 79.226, func: typeLine, args: { text: "Then I will give you" } },
+            { time: 80.620, func: showEmphasis, args: { text: "ANTIOXIDANTS", onComplete: showMolecules } },
+            { time: 81.351, func: typeLine, args: { text: "If I'm a tabby cat", onComplete: () => showEmoji('🐱') } },
+            { time: 82.833, func: typeLine, args: { text: "Then I will purr for your" } },
+            { time: 84.268, func: showEmphasis, args: { text: "ENJOYMENT", onComplete: showSoundWaves } },
+            { time: 85.078, func: typeLine, args: { text: "If I'm the only god", onComplete: () => showEmoji('⚡') } },
+            { time: 86.538, func: typeLine, args: { text: "Then you're the proof of my" } },
+            { time: 87.922, func: showEmphasis, args: { text: "EXISTENCE" } },
+            
+            // Enhanced gender/role switch section
+            { time: 88.587, func: typeLine, args: { text: "Switch my gender" } },
+            { time: 90.197, func: typeLine, args: { text: "To F, to M", onComplete: genderSwitch } },
+            { time: 92.015, func: typeLine, args: { text: "And then do whatever" } },
+            { time: 93.953, func: typeLine, args: { text: "From AM to PM", onComplete: showTimeDisplay } },
+            { time: 95.465, func: typeLine, args: { text: "Oh switch my role" } },
+            { time: 97.739, func: typeLine, args: { text: "To S, to M", onComplete: roleSwitch } },
+            { time: 99.349, func: typeLine, args: { text: "So we can enter" } },
+            { time: 101.474, func: typeLine, args: { text: "The trance, the trance", onComplete: enterTrance } },
+            
+            // NEW: Clear screen for better readability on small screens
+            { time: 102.500, func: clearScreen },
+            { time: 102.800, func: showGitPushProgress },
+
+            { time: 103.489, func: typeLine, args: { text: "If I can, If I can feel your" } },
+            { time: 106.293, func: showEmphasis, args: { text: "VIBRATIONS", onComplete: rippleEffect } },
+            { time: 107.220, func: typeLine, args: { text: "Then I can, Then I can finally be" } },
+            { time: 110.221, func: showEmphasis, args: { text: "COMPLETION" } },
+            
+            { time: 110.900, func: clearScreen },
+            { time: 110.900, func: typeLine, args: { text: "Though you have left..." } },
+            { time: 112.220, func: typeLine, args: { text: "You have left..." } },
+            { time: 113.100, func: typeLine, args: { text: "You have left..." } },
+            { time: 114.180, func: typeLine, args: { text: "You have left..." } },
+            { time: 114.920, func: typeLine, args: { text: "You have left..." } },
+            { time: 115.780, func: typeLine, args: { text: "You have left me in" } },
+            { time: 117.274, func: showIsolation },
+            
+            { time: 118.333, func: clearScreen },
+            { time: 118.333, func: typeLine, args: { text: "If I can, If I can erase all the pointless" } },
+            { time: 120.860, func: showEmphasis, args: { text: "FRAGMENTS" } },
+            { time: 121.728, func: typeLine, args: { text: "Then maybe, Then maybe you won't leave me so" } },
+            { time: 124.890, func: showEmphasis, args: { text: "DISHEARTENED" } },
+            
+            { time: 125.708, func: clearScreen },
+            { time: 125.708, func: addClass, args: { target: ideaEditor, className: 'error screenShake', duration: 12000 } },
+            { time: 125.708, func: typeLine, args: { text: "Challenging your god..." } },
+            { time: 128.661, func: typeLine, args: { text: "You have made some" } },
+            { time: 131.224, func: showEmphasis, args: { text: "ILLEGAL ARGUMENTS" } },
+
+            // Interlude 2: BSOD
+            { time: 133.500, func: showBSOD },
+            { time: 147.000, func: hideBSOD },
+            
+            // Extended EXECUTION spam from 147.660 to 158.000
+            { time: 147.660, func: clearScreen },
+            { time: 147.660, func: executionSpamExtended, args: { duration: 10340 } }, // 10.34 seconds
+            { time: 147.000, func: startVirusErrorSpam },
+            
+            { time: 158.900, func: showChaosText, args: { text: "EIN" } },
+            { time: 159.321, func: showChaosText, args: { text: "DOS" } },
+            { time: 159.657, func: showChaosText, args: { text: "TROIS" } },
+            { time: 160.244, func: showChaosText, args: { text: "NE" } },
+            { time: 160.693, func: showChaosText, args: { text: "FEM" } },
+            { time: 161.124, func: showChaosText, args: { text: "LIU" } },
+            { time: 161.584, func: showEmphasis, args: { text: "EXECUTION" } },
+            { time: 163.000, func: stopVirusErrorSpam },
+            
+            { time: 162.632, func: clearScreen },
+            { time: 162.632, func: typeLine, args: { text: "If I can, If I can give them all the" } },
+            { time: 165.166, func: showEmphasis, args: { text: "EXECUTION", className: 'error' } },
+            { time: 166.016, func: typeLine, args: { text: "Then I can, Then I can be your only" } },
+            { time: 168.911, func: showEmphasis, args: { text: "EXECUTION", className: 'error' } },
+            { time: 169.824, func: typeLine, args: { text: "If I can have you back" } },
+            { time: 171.868, func: typeLine, args: { text: "I will run the" } },
+            { time: 172.712, func: showEmphasis, args: { text: "EXECUTION", className: 'error' } },
+            { time: 173.643, func: typeLine, args: { text: "Though we are trapped... We are trapped ah-" } },
+
+            { time: 177.246, func: clearScreen },
+            { time: 177.246, func: typeLine, args: { text: "I've studied, I've studied how to properly" } },
+            { time: 179.929, func: showEmphasis, args: { text: "L O-O-O V E", className: 'love' } },
+            { time: 180.857, func: typeLine, args: { text: "Question me, question me, I can answer all" } },
+            { time: 183.646, func: showEmphasis, args: { text: "L O-O-O V E", className: 'love' } },
+            { time: 184.540, func: typeLine, args: { text: "I know the algebraic expression of" } },
+            { time: 187.665, func: showEmphasis, args: { text: "L O-O-O V E", className: 'love' } },
+            
+            { time: 188.483, func: clearScreen },
+            { time: 188.483, func: typeLine, args: { text: "Though you are free...", style: {opacity: 0.7} } },
+            { time: 189.746, func: typeLine, args: { text: "I am trapped.", style: {fontSize: '1.5em'} } },
+            { time: 190.801, func: typeLine, args: { text: "Trapped in..." } },
+            { time: 191.356, func: showTrappedInLove },
+            
+            { time: 205.811, func: clearScreen },
+            { time: 205.811, func: finalExecution },
+        ];
+        
+        // --- Core Logic ---
+        let currentIndex = 0;
+        let animationFrameId;
+        let lineCount = 0;
+
+        function startExperience() {
+            launchScreen.classList.add('hidden');
+            setTimeout(() => {
+                ideaEditor.classList.add('visible');
+                playSong();
+            }, 1000);
+        }
+
+        function playSong() {
+            // Reset everything
+            currentIndex = 0;
+            clearScreen();
+            terminal.innerHTML = '';
+            addTerminalLine("Starting world.execute(me);...");
+            
+            // Update button states
+            runButton.classList.add('playing');
+            runButton.querySelector('.button-icon').innerHTML = `
+                <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9 9.50215C9 8.32441 10.2951 7.60608 11.2942 8.22967L15.2962 10.7275C16.2372 11.3149 16.2372 12.6851 15.2962 13.2725L11.2942 15.7703C10.2951 16.3939 9 15.6756 9 14.4978V9.50215ZM10.7647 9.07799C10.4317 8.87013 10 9.10957 10 9.50215V14.4978C10 14.8904 10.4317 15.1298 10.7647 14.922L14.7667 12.4241C15.0804 12.2284 15.0804 11.7716 14.7667 11.5758L10.7647 9.07799Z" fill="#57965C"/>
+                    <path d="M10 9.50217C10 9.10959 10.4317 8.87015 10.7647 9.07801L14.7667 11.5758C15.0804 11.7716 15.0804 12.2284 14.7667 12.4242L10.7647 14.922C10.4317 15.1299 10 14.8904 10 14.4978V9.50217Z" fill="#253627"/>
+                    <path d="M14 1.5C14 1.22386 13.7761 1 13.5 1C13.2239 1 13 1.22386 13 1.5V4.68235C11.9256 3.06631 10.0877 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14V13C5.23858 13 3 10.7614 3 8C3 5.23858 5.23858 3 8 3C9.63527 3 11.0878 3.78495 12.0005 5H9.5C9.22386 5 9 5.22386 9 5.5C9 5.77614 9.22386 6 9.5 6H14V1.5Z" fill="#CED0D6"/>
+                </svg>
+            `;
+            runButton.querySelector('.button-text').textContent = '';
+            stopButton.classList.add('visible');
+            
+            song.currentTime = 0;
+            song.play().then(() => {
+                animationFrameId = requestAnimationFrame(update);
+            }).catch(e => {
+                console.error("Audio playback failed:", e);
+                addTerminalLine("Error: Could not play audio. Is 'world-execute-me.wav' in the same folder?");
+            });
+        }
+        
+        function stopSong() {
+            song.pause();
+            song.currentTime = 0;
+            cancelAnimationFrame(animationFrameId);
+            
+            // Stop virus error spam
+            stopVirusErrorSpam();
+            
+            // Reset button states
+            runButton.classList.remove('playing');
+            runButton.querySelector('.button-icon').innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_16791_12094)">
+                        <path d="M13.5 7.13397C14.1667 7.51888 14.1667 8.48112 13.5 8.86602L4.5 14.0622C3.83333 14.4471 3 13.966 3 13.1962L3 2.80385C3 2.03405 3.83333 1.55292 4.5 1.93782L13.5 7.13397Z" fill="#253627" stroke="#57965C"/>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_16791_12094">
+                            <rect width="16" height="16" fill="white"/>
+                        </clipPath>
+                    </defs>
+                </svg>
+            `;
+            runButton.querySelector('.button-text').textContent = '';
+            stopButton.classList.remove('visible');
+            
+            addTerminalLine("Execution stopped by user.");
+        }
+
+        function update() {
+            const currentTime = song.currentTime;
+            while (currentIndex < timeline.length && currentTime >= timeline[currentIndex].time) {
+                const event = timeline[currentIndex];
+                event.func(event.args || {});
+                currentIndex++;
+            }
+            if (!song.ended) {
+                animationFrameId = requestAnimationFrame(update);
+            } else {
+                cancelAnimationFrame(animationFrameId);
+                addTerminalLine("Execution completed.");
+                
+                // Stop virus error spam
+                stopVirusErrorSpam();
+                
+                // Reset button states when song ends naturally
+                runButton.classList.remove('playing');
+                runButton.querySelector('.button-icon').innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_16791_12094)">
+                            <path d="M13.5 7.13397C14.1667 7.51888 14.1667 8.48112 13.5 8.86602L4.5 14.0622C3.83333 14.4471 3 13.966 3 13.1962L3 2.80385C3 2.03405 3.83333 1.55292 4.5 1.93782L13.5 7.13397Z" fill="#253627" stroke="#57965C"/>
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_16791_12094">
+                                <rect width="16" height="16" fill="white"/>
+                            </clipPath>
+                        </defs>
+                    </svg>
+                `;
+                runButton.querySelector('.button-text').textContent = '';
+                stopButton.classList.remove('visible');
+            }
+        }
+        launchScreen.addEventListener('click', startExperience, { once: true });
+        
+        // Add click events for buttons
+        runButton.addEventListener('click', () => {
+            if (song.ended || song.paused) {
+                playSong();
+            } else {
+                // If song is playing, restart it
+                song.pause();
+                setTimeout(() => playSong(), 100);
+            }
+        });
+        
+        debugButton.addEventListener('click', () => {
+            addTerminalLine("Debug mode activated...");
+            // You can add debug functionality here
+        });
+        
+        stopButton.addEventListener('click', () => {
+            stopSong();
+        });
+        
+        // --- Visual Functions ---
+        function typeLine({ text, className = '', style = {}, onComplete = null }) {
+            lineCount++;
+            updateLineNumbers();
+            
+            const line = document.createElement('div');
+            line.className = `code-line ${className}`;
+            Object.assign(line.style, style);
+            line.innerHTML = `<span class="java-keyword">System</span>.<span class="java-method">out</span>.<span class="java-method">println</span>(<span class="java-string">"${text}"</span>);<span class="cursor"></span>`;
+            codeContent.appendChild(line);
+            
+            // Auto scroll to bottom
+            const codeEditor = document.querySelector('.code-editor');
+            codeEditor.scrollTop = codeEditor.scrollHeight;
+            
+            const cursor = line.querySelector('.cursor');
+            setTimeout(() => cursor.remove(), 1000);
+            
+            if (onComplete) onComplete();
+        }
+
+        function showEmphasis({ text, className = '', onComplete = null }) {
+            lineCount++;
+            updateLineNumbers();
+            
+            const el = document.createElement('div');
+            el.className = `code-line emphasis ${className}`;
+            el.innerHTML = `<span class="java-keyword">final</span> <span class="java-class">String</span> <span class="java-method">message</span> = <span class="java-string">"${text}"</span>;`;
+            codeContent.appendChild(el);
+            
+            // Auto scroll to bottom
+            const codeEditor = document.querySelector('.code-editor');
+            codeEditor.scrollTop = codeEditor.scrollHeight;
+            
+            if (onComplete) onComplete();
+        }
+
+        function clearScreen() { 
+            codeContent.innerHTML = ''; 
+            lineCount = 0;
+            updateLineNumbers();
+        }
+
+        function updateLineNumbers() {
+            lineNumbers.innerHTML = '';
+            for (let i = 1; i <= lineCount; i++) {
+                const lineNum = document.createElement('div');
+                lineNum.textContent = i;
+                lineNumbers.appendChild(lineNum);
+            }
+        }
+
+        function addClass({ target, className, duration }) {
+            target.classList.add(...className.split(' '));
+            setTimeout(() => {
+                target.classList.remove(...className.split(' '));
+            }, duration);
+        }
+
+        function addTerminalLine(text) {
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            line.innerHTML = `<span class="terminal-prompt">$ </span>${text}`;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        // --- Enhanced Effect Functions ---
+        
+        function showPowerLines() {
+            addTerminalLine("Power lines activated...");
+        }
+        
+        function showProtectionShield() {
+            addTerminalLine("Protection shield enabled...");
+        }
+        
+        function currentSwitch() {
+            addTerminalLine("Switching current: AC -> DC");
+        }
+
+        function blindVision() {
+            addTerminalLine("Vision impaired...");
+        }
+
+        function timeTravel() {
+            addTerminalLine("Time travel initiated...");
+        }
+
+        function uniteEffect() {
+            addTerminalLine("Unite effect triggered...");
+        }
+
+        function showEmoji(emoji) {
+            addTerminalLine(`Emoji displayed: ${emoji}`);
+        }
+
+        function showNutrients() {
+            addTerminalLine("Nutrients analysis complete...");
+        }
+
+        function showMolecules() {
+            addTerminalLine("Molecule simulation running...");
+        }
+
+        function showSoundWaves() {
+            addTerminalLine("Sound wave generation...");
+        }
+
+        function genderSwitch() {
+            addTerminalLine("Gender switch: F -> M");
+        }
+
+        function showTimeDisplay() {
+            addTerminalLine("Time display: AM -> PM");
+        }
+
+        function roleSwitch() {
+            addTerminalLine("Role switch: S -> M");
+        }
+
+        function enterTrance() {
+            addTerminalLine("Entering trance mode...");
+        }
+
+        function rippleEffect() {
+            addTerminalLine("Ripple effect detected...");
+        }
+
+        function showIsolation() { 
+            clearScreen(); 
+            showEmphasis({ text: 'ISOLATION', className: 'error' }); 
+            addTerminalLine("Isolation mode activated...");
+        }
+        
+        function showBSOD() {
+            addTerminalLine("CRITICAL ERROR: Illegal arguments detected");
+            addTerminalLine("System shutdown initiated...");
+        }
+        
+        function hideBSOD() {
+            addTerminalLine("System recovery complete...");
+        }
+
+        function executionSpamExtended({ duration }) {
+            const endTime = Date.now() + duration;
+            let count = 0;
+            
+            function spamStep() {
+                if (Date.now() >= endTime) return;
+                
+                lineCount++;
+                updateLineNumbers();
+                
+                const e = document.createElement('div');
+                e.className = 'code-line emphasis error';
+                e.innerHTML = `<span class="java-keyword">throw</span> <span class="java-keyword">new</span> <span class="java-class">RuntimeException</span>(<span class="java-string">"EXECUTION"</span>);`;
+                codeContent.appendChild(e);
+                
+                // Auto scroll to bottom
+                const codeEditor = document.querySelector('.code-editor');
+                codeEditor.scrollTop = codeEditor.scrollHeight;
+                
+                setTimeout(() => e.remove(), Math.random() * 1000 + 500);
+                
+                count++;
+                setTimeout(spamStep, Math.random() * 300 + 100);
+            }
+            
+            spamStep();
+        }
+
+        function showChaosText({ text }) {
+            addTerminalLine(`Chaos text: ${text}`);
+        }
+
+        function showTrappedInLove() {
+            lineCount++;
+            updateLineNumbers();
+            
+            const el = document.createElement('div');
+            el.className = 'code-line love';
+            el.innerHTML = `<span class="java-keyword">while</span>(<span class="java-keyword">true</span>) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="java-keyword">this</span>.<span class="java-method">love</span>(<span class="java-string">"you"</span>);<br>
+} <span class="love">❤</span>`;
+            codeContent.appendChild(el);
+            
+            // Auto scroll to bottom
+            const codeEditor = document.querySelector('.code-editor');
+            codeEditor.scrollTop = codeEditor.scrollHeight;
+            
+            addTerminalLine("Trapped in love loop...");
+        }
+
+        function finalExecution() { 
+            showEmphasis({ text: 'EXECUTION', className: 'error' }); 
+            addTerminalLine("Final execution complete...");
+        }
+
+        // Git Push Progress Functions
+        function showGitPushProgress() {
+            // Show notification
+            gitNotification.classList.add('show');
+            
+            // Reset progress
+            let progress = 0;
+            rainbowCatProgressBar.style.width = '0%';
+            progressText.textContent = '0% - Initializing...';
+            
+            // Update git status
+            gitStatus.innerHTML = `
+                <div class="git-status-line info">Counting objects...</div>
+                <div class="git-status-line info">Compressing objects...</div>
+                <div class="git-status-line info">Writing objects...</div>
+            `;
+            
+            // Simulate progress
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15 + 5; // Random progress increment
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+                    
+                    // Complete
+                    progressText.textContent = '100% - Push completed!';
+                    gitStatus.innerHTML = `
+                        <div class="git-status-line success">✓ Counting objects: 15, done.</div>
+                        <div class="git-status-line success">✓ Compressing objects: 100% (15/15), done.</div>
+                        <div class="git-status-line success">✓ Writing objects: 100% (15/15), done.</div>
+                        <div class="git-status-line success">✓ Total 15 (delta 0), reused 0 (delta 0)</div>
+                        <div class="git-status-line success">✓ To github.com:user/world.execute.me.git</div>
+                        <div class="git-status-line success">✓ 7a1b2c3..9d8e7f6  main -> main</div>
+                    `;
+                    
+                    // Auto-hide after completion
+                    setTimeout(() => {
+                        hideGitNotification();
+                    }, 3000);
+                } else {
+                    rainbowCatProgressBar.style.width = progress + '%';
+                    progressText.textContent = Math.round(progress) + '% - Uploading...';
+                    
+                    // Update status based on progress
+                    if (progress < 30) {
+                        gitStatus.innerHTML = `
+                            <div class="git-status-line success">✓ Counting objects: 15, done.</div>
+                            <div class="git-status-line info">Compressing objects...</div>
+                            <div class="git-status-line info">Writing objects...</div>
+                        `;
+                    } else if (progress < 70) {
+                        gitStatus.innerHTML = `
+                            <div class="git-status-line success">✓ Counting objects: 15, done.</div>
+                            <div class="git-status-line success">✓ Compressing objects: 100% (15/15), done.</div>
+                            <div class="git-status-line info">Writing objects...</div>
+                        `;
+                    } else {
+                        gitStatus.innerHTML = `
+                            <div class="git-status-line success">✓ Counting objects: 15, done.</div>
+                            <div class="git-status-line success">✓ Compressing objects: 100% (15/15), done.</div>
+                            <div class="git-status-line success">✓ Writing objects: 100% (15/15), done.</div>
+                        `;
+                    }
+                }
+            }, 200);
+            
+            // Store interval ID for cancellation
+            gitNotification.dataset.progressInterval = progressInterval;
+        }
+        
+        function hideGitNotification() {
+            gitNotification.classList.remove('show');
+            // Clear any running progress
+            if (gitNotification.dataset.progressInterval) {
+                clearInterval(parseInt(gitNotification.dataset.progressInterval));
+                delete gitNotification.dataset.progressInterval;
+            }
+        }
+        
+        // Git notification button event listeners
+        gitNotificationCancel.addEventListener('click', () => {
+            addTerminalLine("Git push cancelled by user.");
+            hideGitNotification();
+        });
+        
+        gitNotificationView.addEventListener('click', () => {
+            addTerminalLine("Git log: world.execute.me successfully pushed to origin/main");
+            hideGitNotification();
+        });
+
+        // Multiple Error Notifications Functions
+        let virusErrorInterval;
+        
+        function startVirusErrorSpam() {
+            // Clear any existing error notifications
+            errorNotificationsContainer.innerHTML = '';
+            
+            // Start spawning error notifications
+            virusErrorInterval = setInterval(() => {
+                createRandomErrorNotification();
+            }, 800); // Create new error every 800ms
+        }
+        
+        function stopVirusErrorSpam() {
+            if (virusErrorInterval) {
+                clearInterval(virusErrorInterval);
+                virusErrorInterval = null;
+            }
+            // Clear all error notifications after a delay
+            setTimeout(() => {
+                errorNotificationsContainer.innerHTML = '';
+            }, 2000);
+        }
+        
+        function createRandomErrorNotification() {
+            const errorTypes = [
+                {
+                    title: "StackOverflowError",
+                    message: "Maximum call stack size exceeded",
+                    stack: `Exception in thread "main" java.lang.StackOverflowError
+at WorldExecuteMe.execute(WorldExecuteMe.java:69)
+at WorldExecuteMe.execute(WorldExecuteMe.java:69)
+at WorldExecuteMe.execute(WorldExecuteMe.java:69)
+Caused by: Too many EXECUTION calls`
+                },
+                {
+                    title: "OutOfMemoryError",
+                    message: "Java heap space exhausted",
+                    stack: `Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+at WorldExecuteMe.love(WorldExecuteMe.java:166)
+at WorldExecuteMe.giveAll(WorldExecuteMe.java:147)
+Caused by: Memory overflow from EXECUTION spam`
+                },
+                {
+                    title: "ConcurrentModificationException",
+                    message: "Collection was modified during iteration",
+                    stack: `Exception in thread "main" java.util.ConcurrentModificationException
+at WorldExecuteMe.processExecutions(WorldExecuteMe.java:158)
+at WorldExecuteMe.main(WorldExecuteMe.java:15)
+Caused by: Multiple EXECUTION threads`
+                },
+                {
+                    title: "NullPointerException",
+                    message: "Cannot invoke method on null object",
+                    stack: `Exception in thread "main" java.lang.NullPointerException
+at WorldExecuteMe.validateExecution(WorldExecuteMe.java:42)
+at WorldExecuteMe.execute(WorldExecuteMe.java:69)
+Caused by: Null execution context`
+                },
+                {
+                    title: "IllegalStateException",
+                    message: "Invalid state for execution",
+                    stack: `Exception in thread "main" java.lang.IllegalStateException
+at WorldExecuteMe.checkState(WorldExecuteMe.java:133)
+at WorldExecuteMe.execute(WorldExecuteMe.java:69)
+Caused by: System in corrupted state`
+                },
+                {
+                    title: "SecurityException",
+                    message: "Access denied to execution",
+                    stack: `Exception in thread "main" java.lang.SecurityException
+at WorldExecuteMe.validatePermissions(WorldExecuteMe.java:89)
+at WorldExecuteMe.execute(WorldExecuteMe.java:69)
+Caused by: Insufficient execution permissions`
+                }
+            ];
+            
+            const randomError = errorTypes[Math.floor(Math.random() * errorTypes.length)];
+            const notification = createErrorNotification(randomError);
+            
+            // Random position
+            const left = Math.random() * (window.innerWidth - 400);
+            const top = Math.random() * (window.innerHeight - 300);
+            notification.style.left = left + 'px';
+            notification.style.top = top + 'px';
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Auto-hide after random time
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, Math.random() * 3000 + 2000); // 2-5 seconds
+        }
+        
+        function createErrorNotification(errorData) {
+            const notification = document.createElement('div');
+            notification.className = 'error-notification';
+            notification.innerHTML = `
+                <div class="error-notification-header">
+                    <div class="error-notification-icon">⚠</div>
+                    <span>Runtime Exception</span>
+                </div>
+                <div class="error-notification-content">
+                    <div class="error-notification-title">${errorData.title}</div>
+                    <div class="error-notification-message">${errorData.message}</div>
+                    <div class="error-stack-small">
+                        ${errorData.stack}
+                    </div>
+                </div>
+                <div class="error-notification-actions">
+                    <button class="error-notification-btn" onclick="this.parentElement.parentElement.parentElement.classList.remove('show')">Close</button>
+                    <button class="error-notification-btn danger" onclick="addTerminalLine('Error: ${errorData.title} - ${errorData.message}')">Debug</button>
+                </div>
+            `;
+            
+            errorNotificationsContainer.appendChild(notification);
+            return notification;
+        }
+
+        // --- Original Functions (simplified for IDEA style) ---
+        let binaryRainInterval;
+        function startBinaryRain() {
+            addTerminalLine("Binary rain simulation started...");
+        }
+
+        function stopBinaryRain() {
+            addTerminalLine("Binary rain simulation stopped...");
+        }
+        
+        function showCodeSnippet() {
+            lineCount += 6;
+            updateLineNumbers();
+            
+            const el = document.createElement('div');
+            el.className = 'code-line';
+            el.innerHTML = `<span class="java-keyword">public</span> <span class="java-keyword">class</span> <span class="java-class">WorldExecuteMe</span> {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> <span class="java-method">main</span>(<span class="java-class">String</span>[] <span class="java-method">args</span>) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="java-class">System</span>.<span class="java-method">out</span>.<span class="java-method">println</span>(<span class="java-string">"OBJECT CREATION！"</span>);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}`;
+            codeContent.appendChild(el);
+            
+            // Auto scroll to bottom
+            const codeEditor = document.querySelector('.code-editor');
+            codeEditor.scrollTop = codeEditor.scrollHeight;
+            
+            addTerminalLine("Object creation completed...");
+        }
+
+        function showProgressBar() {
+            addTerminalLine("Initialization progress: 100%");
+        }
+        
+        function drawPoints() { addTerminalLine("Points drawn: 50 points"); }
+        function drawCircle() { addTerminalLine("Circle drawn: radius = 40%"); }
+        function drawSineWave() { addTerminalLine("Sine wave generated: 100 points"); }
+        function drawTangents() { addTerminalLine("Tangents calculated: 5 lines"); }
+        function drawLimitations() { addTerminalLine("Limitations set: 2 boundaries"); }
+        function clearScreenAndShapes() { clearScreen(); addTerminalLine("Screen and shapes cleared..."); }
+    </script>
+</body>
+</html>
