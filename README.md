@@ -2,6 +2,22 @@
 
 [English](#english) | [中文](#chinese)
 
+## 🚀 Quick Start with Docker
+
+The fastest way to run this project:
+
+```bash
+docker run -d -p 8080:80 --name world-execute-me-app zmrlft/world-execute-me:v0.1.0
+```
+
+Then visit: http://localhost:8080
+
+To stop the container:
+```bash
+docker stop world-execute-me-app
+docker rm world-execute-me-app
+```
+
 ---
 
 ## English
@@ -50,9 +66,71 @@ On May 19, 2022, a Key Ingredient version of the song was released and included 
 - **Responsive Design**: Works on desktop and mobile devices
 - **Cross-browser Compatible**: Tested on modern browsers
 
+### Docker Deployment
+
+#### Quick Start with Docker
+
+```bash
+# Pull and run the Docker image
+docker run -d -p 8080:80 yourusername/world-execute-me
+
+# Or use docker-compose
+docker-compose up -d
+```
+
+#### Build and Deploy
+
+```bash
+# Build the image
+docker build -t world-execute-me .
+
+# Run locally
+docker run -d -p 8080:80 world-execute-me
+
+# Push to Docker Hub (replace 'yourusername' with your Docker Hub username)
+docker tag world-execute-me yourusername/world-execute-me
+docker push yourusername/world-execute-me
+```
+
+#### Using the Deployment Script
+
+**Linux/macOS:**
+```bash
+# Build and push to Docker Hub
+./deploy.sh yourusername
+
+# Build only (no push)
+./deploy.sh
+```
+
+**Windows:**
+```cmd
+# Build and push to Docker Hub
+deploy.bat yourusername
+
+# Build only (no push)
+deploy.bat
+```
+
 ---
 
 ## Chinese
+
+## 🚀 Docker 快速开始
+
+运行此项目的最快方式：
+
+```bash
+docker run -d -p 8080:80 --name world-execute-me-app zmrlft/world-execute-me:v0.1.0
+```
+
+然后访问：http://localhost:8080
+
+停止容器：
+```bash
+docker stop world-execute-me-app
+docker rm world-execute-me-app
+```
 
 ### 关于这个项目
 
@@ -97,6 +175,52 @@ On May 19, 2022, a Key Ingredient version of the song was released and included 
 - **音频文件**：需要同目录下的 `world-execute-me.wav` 文件
 - **响应式设计**：支持桌面和移动设备
 - **跨浏览器兼容**：在现代浏览器上测试通过
+
+### Docker 部署
+
+#### 快速开始
+
+```bash
+# 拉取并运行 Docker 镜像
+docker run -d -p 8080:80 yourusername/world-execute-me
+
+# 或使用 docker-compose
+docker-compose up -d
+```
+
+#### 构建和部署
+
+```bash
+# 构建镜像
+docker build -t world-execute-me .
+
+# 本地运行
+docker run -d -p 8080:80 world-execute-me
+
+# 推送到 Docker Hub (替换 'yourusername' 为您的 Docker Hub 用户名)
+docker tag world-execute-me yourusername/world-execute-me
+docker push yourusername/world-execute-me
+```
+
+#### 使用部署脚本
+
+**Linux/macOS:**
+```bash
+# 构建并推送到 Docker Hub
+./deploy.sh yourusername
+
+# 仅构建 (不推送)
+./deploy.sh
+```
+
+**Windows:**
+```cmd
+# 构建并推送到 Docker Hub
+deploy.bat yourusername
+
+# 仅构建 (不推送)
+deploy.bat
+```
 
 ---
 
