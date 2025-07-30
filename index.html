@@ -129,6 +129,370 @@
         }
         #idea-editor.visible { display: block; }
 
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            /* Mobile Launch Screen */
+            .launch-title {
+                font-size: 2.5em;
+                letter-spacing: 1px;
+            }
+            .launch-subtitle {
+                font-size: 1.1em;
+                margin-bottom: 2em;
+            }
+            .launch-hint {
+                font-size: 1em;
+            }
+            
+            /* Mobile Background Elements */
+            .bg-element:nth-child(1) {
+                width: 150px; height: 150px;
+                top: 15%; right: 10%;
+            }
+            .bg-element:nth-child(2) {
+                width: 100px; height: 100px;
+                bottom: 25%; left: 5%;
+            }
+            .bg-element:nth-child(3) {
+                width: 80px; height: 80px;
+                top: 70%; right: 15%;
+            }
+            .bg-element:nth-child(4) {
+                width: 120px; height: 120px;
+                bottom: 15%; right: 2%;
+            }
+            
+            /* Mobile Editor Interface */
+            #idea-editor {
+                transform: none;
+                width: 100%;
+                height: 100%;
+            }
+            
+            /* Mobile Toolbar */
+            .toolbar {
+                height: 60px;
+                padding: 0 15px;
+                flex-wrap: wrap;
+            }
+            .project-name {
+                font-size: 0.9em;
+                margin-right: 15px;
+                flex: 1;
+                min-width: 0;
+            }
+            .run-button, .debug-button, .stop-button {
+                padding: 8px 12px;
+                font-size: 0.9em;
+                margin-left: 5px;
+            }
+            .run-button {
+                padding: 8px 15px;
+            }
+            
+            /* Mobile Main Content */
+            .main-content {
+                height: calc(100% - 60px);
+                flex-direction: column;
+            }
+            
+            /* Mobile Project Explorer */
+            .project-explorer {
+                width: 100%;
+                height: 120px;
+                border-right: none;
+                border-bottom: 1px solid var(--idea-border);
+                padding: 8px;
+                overflow-y: auto;
+            }
+            .explorer-title {
+                font-size: 1em;
+                margin-bottom: 8px;
+            }
+            .project-tree {
+                font-size: 0.9em;
+            }
+            .tree-item {
+                padding: 2px 0;
+                font-size: 0.85em;
+            }
+            
+            /* Mobile Editor Area */
+            .editor-area {
+                flex: 1;
+                min-height: 0;
+            }
+            
+            /* Mobile Tabs */
+            .tabs {
+                height: 40px;
+                padding: 0 8px;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .tab {
+                padding: 8px 12px;
+                font-size: 0.9em;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+            
+            /* Mobile Code Editor */
+            .code-editor {
+                padding: 15px;
+            }
+            .line-numbers {
+                width: 40px;
+                padding-right: 8px;
+                font-size: 0.9em;
+            }
+            .code-content {
+                margin-left: 50px;
+                font-size: 14px;
+                line-height: 1.4;
+            }
+            
+            /* Mobile Terminal */
+            .terminal {
+                height: 120px;
+                padding: 8px;
+                font-size: 0.9em;
+            }
+            
+            /* Mobile Notifications */
+            .idea-git-notification {
+                max-width: 90vw;
+                min-width: 300px;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            .idea-git-notification.show {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            
+            .error-notification {
+                max-width: 90vw;
+                min-width: 280px;
+            }
+            
+            /* Mobile Button Icons */
+            .button-icon {
+                width: 14px;
+                height: 14px;
+            }
+            .tab-icon {
+                width: 14px;
+                height: 14px;
+            }
+            .file-icon {
+                width: 14px;
+                height: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Small Mobile Launch Screen */
+            .launch-title {
+                font-size: 2em;
+            }
+            .launch-subtitle {
+                font-size: 1em;
+            }
+            .launch-hint {
+                font-size: 0.9em;
+            }
+            
+            /* Small Mobile Toolbar */
+            .toolbar {
+                height: 70px;
+                padding: 0 10px;
+            }
+            .project-name {
+                font-size: 0.8em;
+                margin-right: 10px;
+            }
+            .run-button, .debug-button, .stop-button {
+                padding: 6px 10px;
+                font-size: 0.8em;
+                margin-left: 3px;
+            }
+            
+            /* Small Mobile Project Explorer */
+            .project-explorer {
+                height: 100px;
+                padding: 6px;
+            }
+            .explorer-title {
+                font-size: 0.9em;
+            }
+            .project-tree {
+                font-size: 0.8em;
+            }
+            .tree-item {
+                font-size: 0.75em;
+            }
+            
+            /* Small Mobile Code Editor */
+            .code-editor {
+                padding: 10px;
+            }
+            .line-numbers {
+                width: 35px;
+                padding-right: 6px;
+                font-size: 0.8em;
+            }
+            .code-content {
+                margin-left: 45px;
+                font-size: 12px;
+            }
+            
+            /* Small Mobile Terminal */
+            .terminal {
+                height: 100px;
+                padding: 6px;
+                font-size: 0.8em;
+            }
+            
+            /* Small Mobile Notifications */
+            .idea-git-notification {
+                max-width: 95vw;
+                min-width: 250px;
+            }
+            .error-notification {
+                max-width: 95vw;
+                min-width: 250px;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            /* Extra Small Mobile */
+            .launch-title {
+                font-size: 1.8em;
+            }
+            .launch-subtitle {
+                font-size: 0.9em;
+            }
+            
+            .toolbar {
+                height: 80px;
+            }
+            .project-name {
+                font-size: 0.75em;
+            }
+            .run-button, .debug-button, .stop-button {
+                padding: 5px 8px;
+                font-size: 0.75em;
+            }
+            
+            .code-content {
+                font-size: 11px;
+            }
+        }
+        
+        /* Landscape Mobile Optimization */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .project-explorer {
+                height: 80px;
+            }
+            .terminal {
+                height: 80px;
+            }
+            .code-editor {
+                padding: 10px;
+            }
+            .code-content {
+                font-size: 13px;
+            }
+        }
+        
+        /* Touch Device Optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .run-button:hover,
+            .debug-button:hover,
+            .stop-button:hover,
+            .tab:hover,
+            .tree-item:hover {
+                background-color: inherit;
+            }
+            
+            .run-button:active,
+            .debug-button:active,
+            .stop-button:active,
+            .tab:active,
+            .tree-item:active {
+                background-color: #5c6164;
+                transform: scale(0.95);
+            }
+            
+            /* Touch-friendly button sizes */
+            .run-button, .debug-button, .stop-button {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            .tab {
+                min-height: 44px;
+            }
+            
+            .tree-item {
+                min-height: 44px;
+                padding: 8px 0;
+            }
+            
+            /* Better scrolling for mobile */
+            .code-editor {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .terminal {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .project-explorer {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+        
+        /* High DPI Display Support */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .button-icon svg,
+            .tab-icon svg,
+            .file-icon svg {
+                transform: scale(0.8);
+            }
+        }
+        
+        /* Dark Mode Support for Mobile */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --idea-bg: #1e1e1e;
+                --idea-tab-bg: #2d2d2d;
+                --idea-border: #404040;
+            }
+        }
+        
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            .bg-element {
+                animation: none;
+            }
+            
+            .cursor {
+                animation: none;
+            }
+            
+            .launch-hint {
+                animation: none;
+            }
+            
+            .rainbow-cat-progress-bar {
+                animation: none;
+            }
+            
+            .cat-emoji {
+                animation: none;
+            }
+        }
+
         /* Toolbar */
         .toolbar {
             height: 50px;
@@ -1688,6 +2052,27 @@ Caused by: Insufficient execution permissions`
             `;
             
             errorNotificationsContainer.appendChild(notification);
+            
+            // Mobile-specific positioning
+            if (isMobile()) {
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                const maxLeft = viewportWidth - 350; // notification width
+                const maxTop = viewportHeight - 300; // notification height
+                
+                const left = Math.min(Math.max(10, Math.random() * maxLeft), maxLeft);
+                const top = Math.min(Math.max(10, Math.random() * maxTop), maxTop);
+                
+                notification.style.left = left + 'px';
+                notification.style.top = top + 'px';
+            } else {
+                // Desktop positioning (original)
+                const left = Math.random() * (window.innerWidth - 400);
+                const top = Math.random() * (window.innerHeight - 300);
+                notification.style.left = left + 'px';
+                notification.style.top = top + 'px';
+            }
+            
             return notification;
         }
 
@@ -1731,6 +2116,111 @@ Caused by: Insufficient execution permissions`
         function drawTangents() { addTerminalLine("Tangents calculated: 5 lines"); }
         function drawLimitations() { addTerminalLine("Limitations set: 2 boundaries"); }
         function clearScreenAndShapes() { clearScreen(); addTerminalLine("Screen and shapes cleared..."); }
+        
+        // --- Mobile Responsive Enhancements ---
+        
+        // Detect mobile device
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   window.innerWidth <= 768;
+        }
+        
+        // Optimize for mobile devices
+        function optimizeForMobile() {
+            if (isMobile()) {
+                // Add touch event listeners for better mobile interaction
+                document.addEventListener('touchstart', function(e) {
+                    // Prevent zoom on double tap
+                    if (e.target.classList.contains('run-button') || 
+                        e.target.classList.contains('debug-button') || 
+                        e.target.classList.contains('stop-button')) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+                
+                // Optimize scrolling for mobile
+                const scrollableElements = document.querySelectorAll('.code-editor, .terminal, .project-explorer');
+                scrollableElements.forEach(element => {
+                    element.style.webkitOverflowScrolling = 'touch';
+                });
+                
+                // Adjust notification positioning for mobile
+                const adjustNotificationPosition = (notification) => {
+                    const rect = notification.getBoundingClientRect();
+                    const viewportWidth = window.innerWidth;
+                    const viewportHeight = window.innerHeight;
+                    
+                    if (rect.right > viewportWidth) {
+                        notification.style.left = (viewportWidth - rect.width - 10) + 'px';
+                    }
+                    if (rect.bottom > viewportHeight) {
+                        notification.style.top = (viewportHeight - rect.height - 10) + 'px';
+                    }
+                    if (rect.left < 0) {
+                        notification.style.left = '10px';
+                    }
+                    if (rect.top < 0) {
+                        notification.style.top = '10px';
+                    }
+                };
+                
+                // Override notification positioning for mobile
+                const originalCreateErrorNotification = createErrorNotification;
+                createErrorNotification = function(errorData) {
+                    const notification = originalCreateErrorNotification(errorData);
+                    
+                    // Adjust position for mobile
+                    setTimeout(() => {
+                        adjustNotificationPosition(notification);
+                    }, 100);
+                    
+                    return notification;
+                };
+            }
+        }
+        
+        // Handle orientation change
+        function handleOrientationChange() {
+            setTimeout(() => {
+                // Recalculate layout after orientation change
+                if (isMobile()) {
+                    optimizeForMobile();
+                }
+            }, 100);
+        }
+        
+        // Initialize mobile optimizations
+        document.addEventListener('DOMContentLoaded', function() {
+            optimizeForMobile();
+            
+            // Listen for orientation changes
+            window.addEventListener('orientationchange', handleOrientationChange);
+            window.addEventListener('resize', handleOrientationChange);
+            
+            // Add mobile-specific event listeners
+            if (isMobile()) {
+                // Prevent context menu on long press for buttons
+                const buttons = document.querySelectorAll('.run-button, .debug-button, .stop-button, .tab');
+                buttons.forEach(button => {
+                    button.addEventListener('contextmenu', function(e) {
+                        e.preventDefault();
+                    });
+                });
+                
+                // Add haptic feedback for mobile (if supported)
+                if ('vibrate' in navigator) {
+                    const addHapticFeedback = (element) => {
+                        element.addEventListener('touchstart', function() {
+                            navigator.vibrate(10);
+                        });
+                    };
+                    
+                    buttons.forEach(addHapticFeedback);
+                }
+            }
+        });
+        
+
     </script>
 </body>
 </html>
