@@ -9,7 +9,7 @@
 The fastest way to run this project:
 
 ```bash
-docker run -d -p 8080:80 --name world-execute-me-app zmrlft/world-execute-me:v0.1.0
+docker run -d -p 8080:80 --name world-execute-me-app zmrlft/world-execute-me:latest
 ```
 
 Then visit: http://localhost:8080
@@ -95,7 +95,7 @@ On May 19, 2022, a Key Ingredient version of the song was released and included 
 运行此项目的最快方式：
 
 ```bash
-docker run -d -p 8080:80 --name world-execute-me-app zmrlft/world-execute-me:v0.1.0
+docker run -d -p 8080:80 --name world-execute-me-app zmrlft/world-execute-me:latest
 ```
 
 然后访问：http://localhost:8080
