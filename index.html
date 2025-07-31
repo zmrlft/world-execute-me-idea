@@ -35,43 +35,201 @@
             overflow: hidden;
         }
 
-        /* IDEA Launch Screen */
+        /* Desktop Background */
         #launch-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 70% 30%, #1e1e1e 0%, #2b2b2b 40%, #3c3f41 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex; justify-content: center; align-items: center;
-            flex-direction: column; cursor: pointer;
+            cursor: pointer;
             z-index: 100;
             transition: opacity 1s;
         }
         #launch-screen.hidden { opacity: 0; pointer-events: none; }
         
-        .launch-content {
+        /* Desktop Icons */
+        .desktop-icons {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 1;
+        }
+
+        .desktop-icon {
+            width: 60px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .desktop-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .icon-symbol {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .icon-text {
+            font-size: 10px;
             text-align: center;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* IntelliJ IDEA Splash Screen */
+        .launch-content {
+            text-align: left;
             color: white;
             position: relative;
             z-index: 2;
+            width: 600px;
+            height: 400px;
+            background: linear-gradient(135deg, #1e1e1e 0%, #2b2b2b 40%, #3c3f41 100%);
+            border-radius: 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            backdrop-filter: blur(20px);
+            border: none;
+            padding: 40px;
         }
+        
         .launch-title {
-            font-size: 4.5em;
+            font-size: 48px;
             font-weight: 300;
-            margin-bottom: 0.3em;
             color: white;
+            margin-bottom: 10px;
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
             letter-spacing: 2px;
         }
         .launch-subtitle {
-            font-size: 1.3em;
+            font-size: 18px;
             color: #a9b7c6;
-            margin-bottom: 3em;
+            margin-bottom: 0;
             font-weight: 300;
         }
         .launch-hint {
-            font-size: 1.1em;
+            position: absolute;
+            bottom: 20px;
+            left: 40px;
+            font-size: 14px;
             color: #808080;
-            animation: blink 1.5s infinite;
+            margin-bottom: 0;
             font-weight: 400;
         }
+        
+        .jetbrains-logo {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: black;
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .jetbrains-text {
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+        
+        .jetbrains-line {
+            width: 100%;
+            height: 1px;
+            background: white;
+            margin-top: 2px;
+        }
+        
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: absolute;
+            bottom: 60px;
+            left: 40px;
+        }
+        
+        .loading-bar {
+            width: 400px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .loading-text {
+            font-size: 12px;
+            color: #a0a0a0;
+            margin-top: 8px;
+        }
+
+        /* Desktop icon animations */
+        .desktop-icon {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .desktop-icon:nth-child(1) { animation-delay: 0.1s; }
+        .desktop-icon:nth-child(2) { animation-delay: 0.2s; }
+        .desktop-icon:nth-child(3) { animation-delay: 0.3s; }
+        .desktop-icon:nth-child(4) { animation-delay: 0.4s; }
+        .desktop-icon:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Splash screen animations */
+        .launch-content {
+            animation: splashFadeIn 0.8s ease-out;
+        }
+
+        @keyframes splashFadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+
         
         /* Abstract background elements */
         .launch-bg-elements {
@@ -491,6 +649,41 @@
             .cat-emoji {
                 animation: none;
             }
+            
+            /* 保持彩虹屁猫动画，即使在其他动画被禁用时 */
+            .animation-rainbow-cat .rainbow-cat .cat {
+                animation: cat-move 0.35s linear 0.2s infinite !important;
+            }
+            
+            .animation-rainbow-cat .rainbow-cat .cat .cat-head {
+                animation: cat-head-move 0.35s cubic-bezier(0.95,-0.11,0.56,0.67) 0.2s infinite !important;
+            }
+            
+            .animation-rainbow-cat .rainbow-cat .cat .cat-legs {
+                animation: cat-legs-move 0.14s cubic-bezier(0.95,-0.11,0.56,0.67) 0.3s infinite alternate !important;
+            }
+            
+            .animation-rainbow-cat .rainbow-cat .rainbow rect {
+                animation-duration: 0.2s !important;
+            }
+        }
+        
+        /* Cool Rainbow Text Effects for 15-29 seconds */
+        .rainbow-text {
+            background: linear-gradient(45deg, 
+                #ff0000, #ff8000, #ffff00, #80ff00, 
+                #00ff00, #00ffff, #0080ff, #8000ff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbowText 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes rainbowText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         /* Toolbar */
@@ -1145,21 +1338,241 @@
             0%, 100% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 107, 107, 0.3); }
             50% { box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 107, 107, 0.6), 0 0 0 1px rgba(255, 107, 107, 0.5); }
         }
+
+        /* 隐藏所有垂直滚动条 */
+        *::-webkit-scrollbar {
+            width: 0 !important;
+            background: transparent !important;
+        }
+        * {
+            scrollbar-width: none !important; /* Firefox */
+            -ms-overflow-style: none !important; /* IE/Edge */
+        }
+
+        /* 彩虹屁猫动画样式 */
+        .animation-rainbow-cat svg {
+            mask-image: linear-gradient(to left,#000000 70%,#ffffff00 84%);
+            -webkit-mask-image: linear-gradient(to left,#000000 70%,#ffffff00 84%);
+            width: 300px;
+            height: 80px;
+        }
+        
+        /* Git通知框中的彩虹屁猫动画容器 */
+        .rainbow-cat-progress #animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 确保彩虹屁猫动画不影响其他动画 */
+        .animation-rainbow-cat {
+            position: relative;
+            z-index: 1;
+            pointer-events: none;
+            will-change: transform;
+        }
+        
+        .animation-rainbow-cat svg {
+            position: relative;
+            z-index: 1;
+            will-change: transform;
+        }
+        
+        /* 修复动画冲突 */
+        .animation-rainbow-cat .rainbow-cat {
+            position: relative;
+            z-index: 1;
+            will-change: transform;
+        }
+        
+        .animation-rainbow-cat .rainbow-cat .cat {
+            position: relative;
+            z-index: 1;
+            will-change: transform;
+        }
+        
+        .animation-rainbow-cat .rainbow-cat .rainbow {
+            position: relative;
+            z-index: 1;
+            will-change: transform;
+        }
+        
+        /* 确保动画优先级 */
+        .animation-rainbow-cat * {
+            animation-fill-mode: both;
+        }
+        .animation-rainbow-cat .rainbow-color1{stop-color:#fc0101;}
+        .animation-rainbow-cat .rainbow-color2{stop-color:#fe9900;}
+        .animation-rainbow-cat .rainbow-color3{stop-color:#ffff00;}
+        .animation-rainbow-cat .rainbow-color4{stop-color:#33ff00;}
+        .animation-rainbow-cat .rainbow-color5{stop-color:#0099ff;}
+        .animation-rainbow-cat .rainbow-color6{stop-color:#6734ff;}
+        .animation-rainbow-cat .rainbow-cat .rainbow rect{width:5px;stroke:transparent;fill:url(#rainbow-colors);}
+        .animation-rainbow-cat .rainbow-cat .rainbow rect:nth-of-type(1){height:7px;transform:translate(40px,6px);animation:rainbow-boost-1 0.2s linear 0.2s infinite alternate;}
+        @keyframes rainbow-boost-1{to{transform:translate(40px,7px);}}
+        .animation-rainbow-cat .rainbow-cat .rainbow rect:nth-of-type(2){height:6.9px;transform:translate(35.1px,5.8px);animation:rainbow-boost-2 0.2s linear 0.23s infinite alternate;}
+        @keyframes rainbow-boost-2{to{transform:translate(35.1px,7.2px);}}
+        .animation-rainbow-cat .rainbow-cat .rainbow rect:nth-of-type(3){height:6.7px;transform:translate(30.2px,5.6px);animation:rainbow-boost-3 0.2s linear 0.26s infinite alternate;}
+        @keyframes rainbow-boost-3{to{transform:translate(30.2px,7.4px);}}
+        .animation-rainbow-cat .rainbow-cat .rainbow rect:nth-of-type(4){height:6.6px;transform:translate(25.3px,5.5px);animation:rainbow-boost-4 0.2s linear 0.29s infinite alternate;}
+        @keyframes rainbow-boost-4{to{transform:translate(25.3px,7.5px);}}
+        .animation-rainbow-cat .rainbow-cat .rainbow rect:nth-of-type(5){height:6.4px;transform:translate(20.4px,5.3px);animation:rainbow-boost-5 0.2s linear 0.32s infinite alternate;}
+        @keyframes rainbow-boost-5{to{transform:translate(20.4px,7.7px);}}
+        .animation-rainbow-cat .rainbow-cat .rainbow rect:nth-of-type(6){height:6.3px;transform:translate(15.6px,5.1px);animation:rainbow-boost-6 0.2s linear 0.35s infinite alternate;}
+        @keyframes rainbow-boost-6{to{transform:translate(15.6px,7.9px);}}
+        .animation-rainbow-cat .rainbow-cat .rainbow rect:nth-of-type(7){height:6.2px;transform:translate(10.8px,5px);animation:rainbow-boost-7 0.2s linear 0.38s infinite alternate;}
+        @keyframes rainbow-boost-7{to{transform:translate(10.8px,8px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(1){width:9px;height:9px;fill:black;transform:translate(1px,0px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(2){width:11px;height:7px;fill:black;transform:translate(0px,1px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(3){width:10px;height:8px;fill:black;transform:translate(0.5px,0.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(4){width:10px;height:7px;fill:#ffcd8e;transform:translate(0.5px,1px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(5){width:9px;height:8px;fill:#ffcd8e;transform:translate(1px,0.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(6){width:8px;height:6px;fill:#ff99ff;transform:translate(1.5px,1.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(7){width:7px;height:7px;fill:#ff99ff;transform:translate(2px,1px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(8){width:9px;height:5px;fill:#ff99ff;transform:translate(1px,2px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(9){width:0.5px;height:0.5px;fill:#fd1a97;transform:translate(2px,2px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(10){width:0.5px;height:0.5px;fill:#fd1a97;transform:translate(2px,7px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(11){width:0.5px;height:0.5px;fill:#fd1a97;transform:translate(1.5px,5.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(12){width:0.5px;height:0.5px;fill:#fd1a97;transform:translate(2.5px,4.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(13){width:0.5px;height:0.5px;fill:#fd1a97;transform:translate(4px,3.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(14){width:0.5px;height:0.5px;fill:#fd1a97;transform:translate(4.5px,5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(15){width:0.5px;height:0.5px;fill:#fd1a97;transform:translate(3.5px,6.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(16){width:0.5px;height:0.5px;fill:#fd1a97;transform:translate(4.5px,1.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(17){width:0.5px;height:0.5px;fill:#fd1a97;transform:translate(6.5px,1.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-bread rect:nth-of-type(18){width:0.5px;height:0.5px;fill:#fd1a97;transform:translate(8.5px,2.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(1){width:0.5px;height:1.5px;fill:black;transform:translate(2.5px,5.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(2){width:1.5px;height:1.5px;fill:black;transform:translate(1.5px,5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(3){width:2px;height:1.5px;fill:black;transform:translate(1px,4.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(4){width:2px;height:1.5px;fill:black;transform:translate(0.5px,4px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(5){width:2px;height:1.5px;fill:black;transform:translate(0px,3.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(6){width:1px;height:0.6px;fill:#989898;transform:translate(2px,5.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(7){width:1px;height:0.6px;fill:#989898;transform:translate(1.5px,5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(8){width:1px;height:0.6px;fill:#989898;transform:translate(1px,4.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(9){width:1px;height:0.6px;fill:#989898;transform:translate(0.5px,4px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(1){width:8px;height:2.5px;fill:black;transform:translate(5px,5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(2){width:7px;height:4px;fill:black;transform:translate(5.5px,4px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(3){width:6px;height:4.5px;fill:black;transform:translate(6px,4px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(4){width:5px;height:5px;fill:black;transform:translate(6.5px,4px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(5){width:2.5px;height:1.5px;fill:black;transform:translate(5.5px,3.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(6){width:2px;height:1.5px;fill:black;transform:translate(5.5px,3px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(7){width:1px;height:1.5px;fill:black;transform:translate(6px,2.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(8){width:2.5px;height:1.5px;fill:black;transform:translate(10px,3.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(9){width:2px;height:1.5px;fill:black;transform:translate(10.5px,3px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(10){width:1px;height:1.5px;fill:black;transform:translate(11px,2.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(11){width:7px;height:2.5px;fill:#989898;transform:translate(5.5px,5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(12){width:6px;height:3.5px;fill:#989898;transform:translate(6px,4.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(13){width:5px;height:4px;fill:#989898;transform:translate(6.5px,4.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(14){width:2px;height:1.5px;fill:#989898;transform:translate(6px,4px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(15){width:1.5px;height:1.5px;fill:#989898;transform:translate(6px,3.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(16){width:1px;height:1.5px;fill:#989898;transform:translate(6px,3px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(17){width:2px;height:1.5px;fill:#989898;transform:translate(10px,4px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(18){width:1.5px;height:1.5px;fill:#989898;transform:translate(10.5px,3.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(19){width:1px;height:1.5px;fill:#989898;transform:translate(11px,3px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(20){width:1px;height:1px;fill:#ff9999;transform:translate(6px,6.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(21){width:1px;height:1px;fill:#ff9999;transform:translate(11.5px,6.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(22){width:1px;height:1px;fill:black;transform:translate(7px,5.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(23){width:0.5px;height:0.5px;fill:white;transform:translate(7px,5.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(24){width:1px;height:1px;fill:black;transform:translate(10.5px,5.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(25){width:0.5px;height:0.5px;fill:white;transform:translate(10.5px,5.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(26){width:0.5px;height:0.5px;fill:black;transform:translate(9.5px,6px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(27){width:3.5px;height:0.5px;fill:black;transform:translate(7.5px,7.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(28){width:0.5px;height:1px;fill:black;transform:translate(7.5px,7px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(29){width:0.5px;height:1px;fill:black;transform:translate(9px,7px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head rect:nth-of-type(30){width:0.5px;height:1px;fill:black;transform:translate(10.5px,7px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(1){width:2px;height:1.5px;fill:black;transform:translate(0px,7.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(2){width:2px;height:1.5px;fill:black;transform:translate(-0.5px,8px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(3){width:2px;height:1.5px;fill:black;transform:translate(-1px,8.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(4){width:1.5px;height:0.6px;fill:#989898;transform:translate(0.5px,8px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(5){width:1.5px;height:0.5px;fill:#989898;transform:translate(-0.5px,8.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(6){width:1px;height:1px;fill:#989898;transform:translate(-0.5px,8.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(7){width:1.5px;height:1px;fill:black;transform:translate(2px,9px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(8){width:2px;height:0.5px;fill:black;transform:translate(2px,9px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(9){width:1px;height:0.5px;fill:#989898;transform:translate(2.5px,9px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(10){width:1.5px;height:1px;fill:black;transform:translate(7px,9px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(11){width:2px;height:0.5px;fill:black;transform:translate(6.5px,9px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(12){width:1px;height:0.5px;fill:#989898;transform:translate(7px,9px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(13){width:1px;height:1px;fill:black;transform:translate(9.5px,9px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(14){width:2px;height:1px;fill:black;transform:translate(9px,8.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(15){width:1px;height:1px;fill:#989898;transform:translate(9.5px,8.5px);}
+        .animation-rainbow-cat .rainbow-cat .cat{animation:cat-move 0.35s linear 0.2s infinite;}
+        @keyframes cat-move{50%{transform:translate(0px,0px);}50%{transform:translate(0.3px,-0.5px);}100%{transform:translate(1px,0px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-head{animation:cat-head-move 0.35s cubic-bezier(0.95,-0.11,0.56,0.67) 0.2s infinite;}
+        @keyframes cat-head-move{0%{transform:translate(43.5px,5px);}50%{transform:translate(44px,5.5px);}100%{transform:translate(43px,5.5px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs{animation:cat-legs-move 0.14s cubic-bezier(0.95,-0.11,0.56,0.67) 0.3s infinite alternate;}
+        @keyframes cat-legs-move{from{transform:translate(43px,5.5px);}to{transform:translate(42.5px,5.5px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(7){animation:cat-back-leg 0.42s cubic-bezier(0.94,-0.35,0,1.2) 0.3s infinite;}
+        @keyframes cat-back-leg{to{transform:translate(2.5px,9px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-legs rect:nth-of-type(10){animation:cat-front-leg 0.42s cubic-bezier(0.94,-0.35,0,1.2) 0.3s infinite;}
+        @keyframes cat-front-leg{to{transform:translate(6.5px,9px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(2){animation:cat-tail-1 0.4s ease-in-out 0.26s infinite alternate;}
+        @keyframes cat-tail-1{to{transform:translate(1.5px,5.5px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(6){animation:cat-tail-5 0.4s ease-in-out 0.264s infinite alternate;}
+        @keyframes cat-tail-5{to{transform:translate(2px,6px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(3){animation:cat-tail-2 0.4s ease-in-out 0.24s infinite alternate;}
+        @keyframes cat-tail-2{to{transform:translate(1px,6px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(7){animation:cat-tail-6 0.4s ease-in-out 0.244s infinite alternate;}
+        @keyframes cat-tail-6{to{transform:translate(1.5px,6.5px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(4){animation:cat-tail-3 0.4s ease-in-out 0.22s infinite alternate;}
+        @keyframes cat-tail-3{to{transform:translate(0px,6.5px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(8){animation:cat-tail-7 0.4s ease-in-out 0.224s infinite alternate;}
+        @keyframes cat-tail-7{to{transform:translate(0.7px,6.8px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(5){animation:cat-tail-4 0.4s ease-in-out 0.18s infinite alternate;}
+        @keyframes cat-tail-4{to{width:1.5px;height:1.3px;transform:translate(-0.4px,7px);}}
+        .animation-rainbow-cat .rainbow-cat .cat .cat-tail rect:nth-of-type(9){animation:cat-tail-8 0.4s ease-in-out 0.2s infinite alternate;}
+        @keyframes cat-tail-8{to{transform:translate(0.2px,7.2px);}}
     </style>
 </head>
 <body>
     <!-- IDEA Launch Screen -->
     <div id="launch-screen">
-        <div class="launch-bg-elements">
-            <div class="bg-element"></div>
-            <div class="bg-element"></div>
-            <div class="bg-element"></div>
-            <div class="bg-element"></div>
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <div class="desktop-icon">
+                <div class="icon-symbol">📁</div>
+                <div class="icon-text">Documents</div>
+            </div>
+            <div class="desktop-icon">
+                <div class="icon-symbol">💻</div>
+                <div class="icon-text">Computer</div>
+            </div>
+            <div class="desktop-icon">
+                <div class="icon-symbol">🗑️</div>
+                <div class="icon-text">Trash</div>
+            </div>
+            <div class="desktop-icon">
+                <div class="icon-symbol">🌐</div>
+                <div class="icon-text">Browser</div>
+            </div>
+            <div class="desktop-icon">
+                <div class="icon-symbol">📧</div>
+                <div class="icon-text">Mail</div>
+            </div>
         </div>
+        
+        <!-- IntelliJ IDEA Splash Screen -->
         <div class="launch-content">
-            <div class="launch-title">IntelliJ IDEA</div>
-            <div class="launch-subtitle">JetBrains IDE</div>
-            <div class="launch-hint">Click to run world.execute(me);</div>
+            <div>
+                <div class="launch-title">IntelliJ IDEA</div>
+                <div class="launch-subtitle">JetBrains IDE</div>
+            </div>
+            
+            <div class="launch-hint">Ultimate 2024.1</div>
+            
+            <div class="jetbrains-logo">
+                <div class="jetbrains-text">JET</div>
+                <div class="jetbrains-text">BRAINS</div>
+                <div class="jetbrains-line"></div>
+            </div>
+            
+            <div class="loading-container">
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
+                <div class="loading-text">Loading project...</div>
+            </div>
         </div>
     </div>
 
@@ -1201,7 +1614,7 @@
                         <rect x="2.5" y="2.5" width="11" height="11" rx="1.5" fill="#5E3838" stroke="#DB5C5C"/>
                     </svg>
                 </span>
-                <span class="button-text">Stop</span>
+                <span class="button-text"></span>
             </button>
         </div>
 
@@ -1246,7 +1659,7 @@
                         </span>
                         WorldExecuteMe.java
                     </div>
-                    <div class="tree-item">
+                    <div class="tree-item" onclick="window.open('https://github.com/zmrlft/world-execute-me-idea/blob/master/README.md','_blank')">
                         <span class="file-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M12.5929 9.9438L12.5929 4.70001L13.7929 4.70002L13.7929 9.94379L15.0763 8.66037L15.9248 9.5089L13.1929 12.2409L10.4609 9.5089L11.3095 8.66037L12.5929 9.9438Z" fill="#548AF7"/>
@@ -1310,9 +1723,34 @@
             <div class="git-notification-message" id="git-notification-message">Uploading world.execute.me project...</div>
             
             <div class="rainbow-cat-progress">
-                <div class="progress-bar-container">
-                    <div class="rainbow-cat-progress-bar" id="rainbow-cat-progress-bar" style="width: 0%"></div>
-                    <div class="cat-emoji">🐱</div>
+                <div id="animation-container">
+                    <svg class="animation-rainbow-cat" viewBox="0 0 70 20">
+                        <defs>
+                            <linearGradient id="rainbow-colors" x1="0.5" x2="0.5" y2="1">
+                                <stop class="rainbow-color1" offset="0"/>
+                                <stop class="rainbow-color1" offset="0.167"/>
+                                <stop class="rainbow-color2" offset="0.167"/>
+                                <stop class="rainbow-color2" offset="0.335"/>
+                                <stop class="rainbow-color3" offset="0.335"/>
+                                <stop class="rainbow-color3" offset="0.5"/>
+                                <stop class="rainbow-color4" offset="0.5"/>
+                                <stop class="rainbow-color4" offset="0.669"/>
+                                <stop class="rainbow-color5" offset="0.669"/>
+                                <stop class="rainbow-color5" offset="0.833"/>
+                                <stop class="rainbow-color6" offset="0.833"/>
+                                <stop class="rainbow-color6" offset="1"/>
+                            </linearGradient>
+                        </defs>
+                        <g class="rainbow-cat">
+                            <g class="rainbow"><rect/><rect/><rect/><rect/><rect/><rect/><rect/></g>
+                            <g class="cat">
+                                <g class="cat-tail" transform="translate(40, 5.5)"><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/></g>
+                                <g class="cat-legs" transform="translate(43, 5.5)"><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/></g>
+                                <g class="cat-bread" transform="translate(43, 5.5)"><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/></g>
+                                <g class="cat-head" transform="translate(43, 5.5)"><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/><rect/></g>
+                            </g>
+                        </g>
+                    </svg>
                 </div>
                 <div class="progress-text" id="progress-text">0% - Initializing...</div>
             </div>
@@ -1345,7 +1783,6 @@
         const gitNotification = document.getElementById('idea-git-notification');
         const gitNotificationTitle = document.getElementById('git-notification-title');
         const gitNotificationMessage = document.getElementById('git-notification-message');
-        const rainbowCatProgressBar = document.getElementById('rainbow-cat-progress-bar');
         const progressText = document.getElementById('progress-text');
         const gitStatus = document.getElementById('git-status');
         const gitNotificationCancel = document.getElementById('git-notification-cancel');
@@ -1365,10 +1802,12 @@
             { time: 12.906, func: typeLine, args: { text: "And let's begin the" } },
             { time: 13.891, func: showEmphasis, args: { text: "SIMULATION" } },
             
-            // Interlude 1: Binary Rain
+            // Interlude 1: Binary Rain with Rainbow Effects
+            { time: 15.000, func: startRainbowMode },
             { time: 16.000, func: startBinaryRain },
             { time: 20.000, func: showGitPushProgress },
             { time: 29.000, func: stopBinaryRain },
+            { time: 29.500, func: stopRainbowMode },
             { time: 29.500, func: clearScreen },
 
             { time: 29.709, func: typeLine, args: { text: "If I'm a set of points", onComplete: drawPoints } },
@@ -1401,6 +1840,8 @@
             { time: 58.000, func: clearScreen },
             { time: 58.500, func: showGitPushProgress },
             
+            // Rainbow mode for 59-74 seconds
+            { time: 59.000, func: startRainbowMode },
             { time: 59.223, func: typeLine, args: { text: "If I can, If I can give you all the" } },
             { time: 61.958, func: showEmphasis, args: { text: "STIMULATIONS" } },
             { time: 62.589, func: typeLine, args: { text: "Then I can, Then I can be your only" } },
@@ -1413,6 +1854,7 @@
             { time: 73.169, func: showEmphasis, args: { text: "SIMULATION" } },
             
             // Enhanced eggplant/tomato/cat/god section
+            { time: 74.000, func: stopRainbowMode },
             { time: 74.045, func: clearScreenAndShapes },
             { time: 74.045, func: typeLine, args: { text: "If I'm an eggplant", onComplete: () => showEmoji('🍆') } },
             { time: 75.422, func: typeLine, args: { text: "Then I will give you my" } },
@@ -1485,6 +1927,8 @@
             { time: 161.584, func: showEmphasis, args: { text: "EXECUTION" } },
             { time: 163.000, func: stopVirusErrorSpam },
             
+            // Rainbow mode for 162-192 seconds
+            { time: 162.000, func: startRainbowMode },
             { time: 162.632, func: clearScreen },
             { time: 162.632, func: typeLine, args: { text: "If I can, If I can give them all the" } },
             { time: 165.166, func: showEmphasis, args: { text: "EXECUTION", className: 'error' } },
@@ -1509,6 +1953,9 @@
             { time: 190.801, func: typeLine, args: { text: "Trapped in..." } },
             { time: 191.356, func: showTrappedInLove },
             
+            // Stop rainbow mode at 192 seconds
+            { time: 192.000, func: stopRainbowMode },
+            
             { time: 205.811, func: clearScreen },
             { time: 205.811, func: finalExecution },
         ];
@@ -1519,11 +1966,38 @@
         let lineCount = 0;
 
         function startExperience() {
-            launchScreen.classList.add('hidden');
-            setTimeout(() => {
-                ideaEditor.classList.add('visible');
-                playSong();
-            }, 1000);
+            // Start loading animation
+            const loadingProgress = document.querySelector('.loading-progress');
+            const loadingText = document.querySelector('.loading-text');
+            let progress = 0;
+            
+            const loadingInterval = setInterval(() => {
+                progress += Math.random() * 15 + 5; // Random progress between 5-20%
+                if (progress > 100) progress = 100;
+                
+                loadingProgress.style.width = progress + '%';
+                
+                if (progress < 30) {
+                    loadingText.textContent = 'Loading project...';
+                } else if (progress < 60) {
+                    loadingText.textContent = 'Initializing IDE...';
+                } else if (progress < 90) {
+                    loadingText.textContent = 'Starting world.execute(me);...';
+                } else {
+                    loadingText.textContent = 'Ready!';
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(loadingInterval);
+                    setTimeout(() => {
+                        launchScreen.classList.add('hidden');
+                        setTimeout(() => {
+                            ideaEditor.classList.add('visible');
+                            playSong();
+                        }, 1000);
+                    }, 500);
+                }
+            }, 200);
         }
 
         function playSong() {
@@ -1562,6 +2036,12 @@
             // Stop virus error spam
             stopVirusErrorSpam();
             
+            // Stop lock-heart loop if running
+            if (window.lockHeartInterval) {
+                clearInterval(window.lockHeartInterval);
+                window.lockHeartInterval = null;
+            }
+            
             // Reset button states
             runButton.classList.remove('playing');
             runButton.querySelector('.button-icon').innerHTML = `
@@ -1597,6 +2077,12 @@
                 
                 // Stop virus error spam
                 stopVirusErrorSpam();
+                
+                // Stop lock-heart loop if running
+                if (window.lockHeartInterval) {
+                    clearInterval(window.lockHeartInterval);
+                    window.lockHeartInterval = null;
+                }
                 
                 // Reset button states when song ends naturally
                 runButton.classList.remove('playing');
@@ -1649,6 +2135,15 @@
             line.innerHTML = `<span class="java-keyword">System</span>.<span class="java-method">out</span>.<span class="java-method">println</span>(<span class="java-string">"${text}"</span>);<span class="cursor"></span>`;
             codeContent.appendChild(line);
             
+            // Apply rainbow effect to new line if rainbow mode is active
+            if (document.querySelector('.rainbow-text')) {
+                line.classList.add('rainbow-text');
+                const spans = line.querySelectorAll('span');
+                spans.forEach(span => {
+                    span.classList.add('rainbow-text');
+                });
+            }
+            
             // Auto scroll to bottom
             const codeEditor = document.querySelector('.code-editor');
             codeEditor.scrollTop = codeEditor.scrollHeight;
@@ -1667,6 +2162,15 @@
             el.className = `code-line emphasis ${className}`;
             el.innerHTML = `<span class="java-keyword">final</span> <span class="java-class">String</span> <span class="java-method">message</span> = <span class="java-string">"${text}"</span>;`;
             codeContent.appendChild(el);
+            
+            // Apply rainbow effect to new line if rainbow mode is active
+            if (document.querySelector('.rainbow-text')) {
+                el.classList.add('rainbow-text');
+                const spans = el.querySelectorAll('span');
+                spans.forEach(span => {
+                    span.classList.add('rainbow-text');
+                });
+            }
             
             // Auto scroll to bottom
             const codeEditor = document.querySelector('.code-editor');
@@ -1709,6 +2213,77 @@
         
         function showPowerLines() {
             addTerminalLine("Power lines activated...");
+        }
+        
+        // Rainbow effects for 15-29 seconds
+        function startRainbowMode() {
+            addTerminalLine("🌈 Rainbow mode activated!");
+            
+            // Add rainbow text effects to all text elements
+            const textElements = document.querySelectorAll('.code-line, .terminal-line, .tree-item, .explorer-title, .project-name, .tab, .run-button, .debug-button, .stop-button, .emphasis, .error, .love, .highlight');
+            textElements.forEach(element => {
+                element.classList.add('rainbow-text');
+            });
+            
+            // Add rainbow text to line numbers
+            const lineNumbers = document.querySelector('.line-numbers');
+            if (lineNumbers) {
+                lineNumbers.classList.add('rainbow-text');
+            }
+            
+            // Add rainbow text to terminal prompt
+            const terminalPrompts = document.querySelectorAll('.terminal-prompt');
+            terminalPrompts.forEach(prompt => {
+                prompt.classList.add('rainbow-text');
+            });
+            
+            // Add rainbow text to button text
+            const buttonTexts = document.querySelectorAll('.button-text');
+            buttonTexts.forEach(text => {
+                text.classList.add('rainbow-text');
+            });
+            
+            // Add rainbow text to tab text
+            const tabTexts = document.querySelectorAll('.tab span:not(.tab-icon)');
+            tabTexts.forEach(text => {
+                text.classList.add('rainbow-text');
+            });
+            
+            // Add rainbow text to code editor content (including syntax highlighting)
+            const codeContent = document.querySelector('.code-content');
+            if (codeContent) {
+                codeContent.classList.add('rainbow-text');
+            }
+            
+            // Add rainbow text to all spans within code lines (for syntax highlighting)
+            const codeSpans = document.querySelectorAll('.code-line span');
+            codeSpans.forEach(span => {
+                span.classList.add('rainbow-text');
+            });
+        }
+        
+
+        
+        function stopRainbowMode() {
+            addTerminalLine("🌈 Rainbow mode deactivated!");
+            
+            // Remove rainbow text effects from all text elements
+            const allElements = document.querySelectorAll('*');
+            allElements.forEach(element => {
+                element.classList.remove('rainbow-text');
+            });
+            
+            // Ensure code editor content is properly cleaned
+            const codeContent = document.querySelector('.code-content');
+            if (codeContent) {
+                codeContent.classList.remove('rainbow-text');
+            }
+            
+            // Clean up all code spans
+            const codeSpans = document.querySelectorAll('.code-line span');
+            codeSpans.forEach(span => {
+                span.classList.remove('rainbow-text');
+            });
         }
         
         function showProtectionShield() {
@@ -1830,6 +2405,25 @@
             codeEditor.scrollTop = codeEditor.scrollHeight;
             
             addTerminalLine("Trapped in love loop...");
+            
+            // Start lock and heart pattern loop
+            startLockHeartLoop();
+        }
+        
+        function startLockHeartLoop() {
+            let count = 0;
+            window.lockHeartInterval = setInterval(() => {
+                count++;
+                const pattern = count % 2 === 0 ? "🔒 ❤️" : "❤️ 🔒";
+                addTerminalLine(`$ ${pattern} Trapped in LO-O-OVE ${pattern}`);
+                
+                // Stop after 30 iterations (about 15 seconds)
+                if (count >= 30) {
+                    clearInterval(window.lockHeartInterval);
+                    window.lockHeartInterval = null;
+                    addTerminalLine("$ Love loop completed...");
+                }
+            }, 500); // Print every 500ms
         }
 
         function finalExecution() { 
@@ -1844,7 +2438,6 @@
             
             // Reset progress
             let progress = 0;
-            rainbowCatProgressBar.style.width = '0%';
             progressText.textContent = '0% - Initializing...';
             
             // Update git status
@@ -1878,7 +2471,6 @@
                         hideGitNotification();
                     }, 3000);
                 } else {
-                    rainbowCatProgressBar.style.width = progress + '%';
                     progressText.textContent = Math.round(progress) + '% - Uploading...';
                     
                     // Update status based on progress
