@@ -2,7 +2,9 @@
 
 [English](#english) | [中文](#chinese)
 
-## 🚀 Quick Start with Docker
+## 🚀 Quick Start
+
+### Option 1: Docker (Recommended)
 
 The fastest way to run this project:
 
@@ -17,6 +19,22 @@ To stop the container:
 docker stop world-execute-me-app
 docker rm world-execute-me-app
 ```
+
+### Option 2: GitHub Pages (Free Hosting)
+
+This project is fully compatible with GitHub Pages hosting. You can deploy it for free:
+
+1. Fork this repository to your GitHub account
+2. Go to your repository Settings → Pages
+3. Select "Deploy from a branch" and choose `main` branch
+4. Your site will be available at: `https://yourusername.github.io/world-execute-me-idea/`
+
+**Live Demo**: https://zmrlft.github.io/world-execute-me-idea/
+
+### Option 3: Local Run
+
+1. Copy `index.html` and `world-execute-me.wav` to the same folder
+2. Double-click `index.html` to open in your browser
 
 ---
 
@@ -66,57 +84,13 @@ On May 19, 2022, a Key Ingredient version of the song was released and included 
 - **Responsive Design**: Works on desktop and mobile devices
 - **Cross-browser Compatible**: Tested on modern browsers
 
-### Docker Deployment
-
-#### Quick Start with Docker
-
-```bash
-# Pull and run the Docker image
-docker run -d -p 8080:80 yourusername/world-execute-me
-
-# Or use docker-compose
-docker-compose up -d
-```
-
-#### Build and Deploy
-
-```bash
-# Build the image
-docker build -t world-execute-me .
-
-# Run locally
-docker run -d -p 8080:80 world-execute-me
-
-# Push to Docker Hub (replace 'yourusername' with your Docker Hub username)
-docker tag world-execute-me yourusername/world-execute-me
-docker push yourusername/world-execute-me
-```
-
-#### Using the Deployment Script
-
-**Linux/macOS:**
-```bash
-# Build and push to Docker Hub
-./deploy.sh yourusername
-
-# Build only (no push)
-./deploy.sh
-```
-
-**Windows:**
-```cmd
-# Build and push to Docker Hub
-deploy.bat yourusername
-
-# Build only (no push)
-deploy.bat
-```
-
 ---
 
 ## Chinese
 
-## 🚀 Docker 快速开始
+## 🚀 快速开始
+
+### 方式一：Docker（推荐）
 
 运行此项目的最快方式：
 
@@ -131,6 +105,22 @@ docker run -d -p 8080:80 --name world-execute-me-app zmrlft/world-execute-me:v0.
 docker stop world-execute-me-app
 docker rm world-execute-me-app
 ```
+
+### 方式二：GitHub Pages（免费托管）
+
+本项目完全兼容GitHub Pages托管，您可以免费部署：
+
+1. 将此仓库Fork到您的GitHub账户
+2. 进入仓库设置 → Pages
+3. 选择"从分支部署"并选择 `main` 分支
+4. 您的网站将可通过以下地址访问：`https://yourusername.github.io/world-execute-me-idea/`
+
+**在线演示**: https://zmrlft.github.io/world-execute-me-idea/
+
+### 方式三：本地运行
+
+1. 将 `index.html` 和 `world-execute-me.wav` 复制到同一个文件夹
+2. 双击 `index.html` 在浏览器中打开
 
 ### 关于这个项目
 
@@ -175,52 +165,6 @@ docker rm world-execute-me-app
 - **音频文件**：需要同目录下的 `world-execute-me.wav` 文件
 - **响应式设计**：支持桌面和移动设备
 - **跨浏览器兼容**：在现代浏览器上测试通过
-
-### Docker 部署
-
-#### 快速开始
-
-```bash
-# 拉取并运行 Docker 镜像
-docker run -d -p 8080:80 yourusername/world-execute-me
-
-# 或使用 docker-compose
-docker-compose up -d
-```
-
-#### 构建和部署
-
-```bash
-# 构建镜像
-docker build -t world-execute-me .
-
-# 本地运行
-docker run -d -p 8080:80 world-execute-me
-
-# 推送到 Docker Hub (替换 'yourusername' 为您的 Docker Hub 用户名)
-docker tag world-execute-me yourusername/world-execute-me
-docker push yourusername/world-execute-me
-```
-
-#### 使用部署脚本
-
-**Linux/macOS:**
-```bash
-# 构建并推送到 Docker Hub
-./deploy.sh yourusername
-
-# 仅构建 (不推送)
-./deploy.sh
-```
-
-**Windows:**
-```cmd
-# 构建并推送到 Docker Hub
-deploy.bat yourusername
-
-# 仅构建 (不推送)
-deploy.bat
-```
 
 ---
 
